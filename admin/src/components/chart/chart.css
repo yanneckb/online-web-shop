@@ -1,0 +1,19 @@
+.chart {
+  margin: 20px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 6px 15px rgb(36 37 38 / 8%);
+  -webkit-box-shadow: 0 6px 15px rgb(36 37 38 / 8%);
+  -moz-box-shadow: 0 6px 15px rgb(36 37 38 / 8%);
+  transition: 0.25s ease, transform 0.25s ease;
+  border-radius: 1rem;
+}
+.chart:hover {
+  box-shadow: 0 6px 15px rgb(36 37 38 / 20%);
+  -webkit-box-shadow: 0 6px 15px rgb(36 37 38 / 20%);
+  -moz-box-shadow: 0 6px 15px rgb(36 37 38 / 20%);
+}
+
+.chartTitle {
+  margin-bottom: 20px;
+}
