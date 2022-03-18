@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { publicReq } from '../../helpers/requestMethods';
+import { userReq } from '../../helpers/requestMethods';
 import { register } from '../../redux/apiCalls.redux';
 import * as Styled from './styles';
 
@@ -13,7 +13,6 @@ const Register = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
   });
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
@@ -27,16 +26,11 @@ const Register = () => {
   };
   const handleClick = (e) => {
     e.preventDefault();
-    const { firstName, lastName, username, email, password, confirmPassword } =
-      user;
-    if (password !== confirmPassword) {
-      alert('Passwörter stimmen nicht überein!');
-    } else if (
-      (firstName, lastName, username, email, password, confirmPassword)
-    ) {
-      publicReq.post('auth/register', user);
+    const { firstName, lastName, username, email, password } = user;
+    if ((firstName, lastName, username, email, password)) {
+      register(dispatch, user);
     } else {
-      alert('Ungülitge Eingaben!');
+      return alert('Ungülitge Eingaben!');
     }
   };
 
@@ -102,25 +96,7 @@ const Register = () => {
                   }
             }
           />
-          <Styled.Input
-            placeholder='Email'
-            value={user.email}
-            name='email'
-            onChange={handleChange}
-            style={
-              error
-                ? {
-                    border: '1px solid #953b43',
-                    backgroundColor: '#f8d7da',
-                    color: '#953b43',
-                  }
-                : {
-                    border: '1px solid grey',
-                    backgroundColor: 'none',
-                    color: '#black',
-                  }
-            }
-          />
+
           <Styled.Input
             placeholder='Passwort'
             value={user.password}
@@ -141,9 +117,9 @@ const Register = () => {
             }
           />
           <Styled.Input
-            placeholder='Passwort wiederholen'
-            value={user.confirmPassword}
-            name='confirmPassword'
+            placeholder='Email'
+            value={user.email}
+            name='email'
             onChange={handleChange}
             style={
               error
@@ -159,6 +135,25 @@ const Register = () => {
                   }
             }
           />
+          {/* <Styled.Input
+            placeholder='Passwort wiederholen'
+            value={confirmPassword}
+            name='confirmPassword'
+            onChange={handleChange}
+            style={
+              error
+                ? {
+                    border: '1px solid #953b43',
+                    backgroundColor: '#f8d7da',
+                    color: '#953b43',
+                  }
+                : {
+                    border: '1px solid grey',
+                    backgroundColor: 'none',
+                    color: '#black',
+                  }
+            }
+          /> */}
           <Styled.Agreement>
             Mit der Erstellung eines Kontos stimme ich der Verarbeitung meiner
             personenbezogenen Daten gemäß der <b>DATENSCHUTZERKLÄRUNG</b> zu

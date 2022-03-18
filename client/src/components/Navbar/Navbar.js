@@ -22,9 +22,9 @@ const Navbar = () => {
           <Styled.Language>DE</Styled.Language>
           {user ? (
             <>
-              <button onClick={handleClick}>
+              <Styled.LogoutBtn onClick={handleClick}>
                 <Styled.MenuItem>Logout</Styled.MenuItem>
-              </button>
+              </Styled.LogoutBtn>
             </>
           ) : (
             <>

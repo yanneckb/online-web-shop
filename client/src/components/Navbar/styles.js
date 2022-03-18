@@ -8,10 +8,21 @@ export const StyledLink = styled(Link)`
   ${mobile({ padding: '0.25rem 0' })}
 `;
 
+export const LogoutBtn = styled.button`
+  text-decoration: none;
+  color: black;
+  border: none;
+  background: none;
+  ${mobile({ padding: '0.25rem 0' })}
+`;
+
 export const Container = styled.div`
   height: 60px;
   padding: 0 4rem;
-  ${mobile({ height: '4.5rem', padding: '0' })}
+  ${mobile({
+    height: 'auto',
+    padding: '0',
+  })}
 `;
 
 export const Wrapper = styled.div`
@@ -19,7 +30,7 @@ export const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  ${mobile({ padding: '0.5rem 0' })}
+  ${mobile({ padding: '0.5rem 0', display: 'flex', alignItems: 'center' })}
 `;
 
 export const Left = styled.div`
