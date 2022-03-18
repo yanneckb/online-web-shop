@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import * as Styled from './styles';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { publicReq } from '../../helpers/requestMethods';
 import { Add, Remove } from '@material-ui/icons';
 import { addProduct } from '../../redux/cart.redux';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Product = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.currentUser) || false;
   const id = location.pathname.split('/')[2];
   const [product, setProduct] = useState({});
   const [qty, setQty] = useState(1);
@@ -36,7 +38,11 @@ const Product = () => {
 
   const handleClick = () => {
     // UPDATE CART
-    dispatch(addProduct({ ...product, qty, color, size }));
+    if (user) {
+      dispatch(addProduct({ ...product, qty, color, size }));
+    } else {
+      navigate('/login');
+    }
   };
 
   return (
@@ -47,7 +53,9 @@ const Product = () => {
         </Styled.ImgContainer>
         <Styled.InfoContainer>
           <Styled.CategoryContainer>
-            <Styled.Category>{product.categories}</Styled.Category>
+            <Styled.Category>
+              {product.categories?.map((cat) => cat + ' ')}
+            </Styled.Category>
           </Styled.CategoryContainer>
           <Styled.Title>{product.title}</Styled.Title>
           <Styled.Desc>{product.description}</Styled.Desc>

@@ -39,7 +39,11 @@ const App = () => {
               path='/login'
               element={user ? <Navigate to='/' /> : <Login />}
             />
-            <Route exact path='/cart' element={<Cart />} />
+            <Route
+              exact
+              path='/cart'
+              element={!user ? <Navigate to='/login' /> : <Cart />}
+            />
             <Route exact path='/pay' element={<Pay />} />
             <Route exact path='/success' element={<Success />} />
           </Routes>

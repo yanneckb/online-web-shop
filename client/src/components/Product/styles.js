@@ -10,7 +10,7 @@ export const StyledLink = styled(Link)`
 `;
 
 export const Image = styled.img`
-  height: 12vw;
+  height: 15vw;
   z-index: 2;
   ${mobile({ height: '20vh' })}
 `;
@@ -19,8 +19,7 @@ export const Container = styled.div`
   flex: 1;
   margin: 5px;
   padding: 1rem;
-  min-width: 280px;
-  height: 350px;
+
   display: flex;
   align-items: center;
   justify-content: center;
