@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react';
 import { Add, Delete, Remove } from '@material-ui/icons';
 import * as Styled from './styles';
 import { paymentMethod } from '../../helpers/paymentMethodSVGs';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  deleteProduct,
+  increaseProduct,
+  decreaseProduct,
+} from '../../redux/cart.redux';
 import StripeCheckout from 'react-stripe-checkout';
 import { userReq } from '../../helpers/requestMethods';
 import { useNavigate } from 'react-router-dom';
@@ -10,27 +15,29 @@ import { useNavigate } from 'react-router-dom';
 const KEY = process.env.REACT_APP_STRIPE;
 
 const Cart = () => {
-  const cart = useSelector((state) => state.cart);
+  const { cart, qty, total } = useSelector((state) => state);
   const [stripeToken, setStripeToken] = useState(null);
-  const [cartItems, setCartItems] = useState([...cart.products]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onToken = (token) => {
     setStripeToken(token);
   };
 
   const handleQty = (target, type) => {
-    const index = cartItems.findIndex((item) => {
+    const index = cart.products.findIndex((item) => {
       return item._id === target._id;
     });
     if (type === 'acs') {
-      setCartItems([...cartItems, (cartItems[index].qty += 1)]);
+      dispatch(increaseProduct({ index, product: target }));
     }
     if (type === 'decs') {
-      setCartItems([...cartItems, (cartItems[index].qty -= 1)]);
+      dispatch(decreaseProduct({ index, product: target }));
     }
     if (type === 'remove') {
-      //REMOVE ITEMS FROM ARRAY
+      dispatch(
+        deleteProduct({ index, products: cart.products, product: target })
+      );
     }
   };
 
@@ -46,8 +53,6 @@ const Cart = () => {
     };
     stripeToken && cart.total >= 1 && makeReq();
   }, [stripeToken, cart.total, navigate]);
-
-  useEffect(() => {});
 
   return (
     <Styled.Container>
@@ -68,7 +73,7 @@ const Cart = () => {
               <p>Dein Warenkorb ist leer...</p>
             ) : (
               cart.products.map((product) => (
-                <Styled.Product>
+                <Styled.Product key={product._id}>
                   <Styled.ProductDetail>
                     <Styled.Image src={product.img} />
                     <Styled.Details>

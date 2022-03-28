@@ -28,52 +28,30 @@ const AppLayout = () => {
 };
 
 function App() {
-   const admin = JSON.parse(
-     JSON.parse(localStorage.getItem('persist:root')).user
-   ).currentUser.isAdmin;
-  
-  return(
+  const admin = JSON.parse(
+    JSON.parse(localStorage.getItem('persist:root')).user
+  ).currentUser.isAdmin;
+
+  return (
     <BrowserRouter>
       <Routes>
         <Route path='/login' element={<Login />} />
-        { admin ?
-            <Route path='/' element={<AppLayout />}>
-              <Route path='/' element={<Home />} />
-              <Route path='/users' element={<UserList />} />
-              <Route path='/user/:userId' element={<User />} />
-              <Route path='/newUser' element={<NewUser />} />
-              <Route path='/products' element={<ProductList />} />
-              <Route path='/product/:productId' element={<Product />} />
-              <Route path='/newproduct' element={<NewProduct />} />
-            </Route>
-          : <Route path='/error' element={<Error />} />
-        }
+        {admin ? (
+          <Route path='/' element={<AppLayout />}>
+            <Route path='/' element={<Home />} />
+            <Route path='/users' element={<UserList />} />
+            <Route path='/user/:userId' element={<User />} />
+            <Route path='/newUser' element={<NewUser />} />
+            <Route path='/products' element={<ProductList />} />
+            <Route path='/product/:productId' element={<Product />} />
+            <Route path='/newproduct' element={<NewProduct />} />
+          </Route>
+        ) : (
+          <Route path='/error' element={<Error />} />
+        )}
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
-
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path='/login' element={<Login />} />
-//       </Routes>
-//       <Topbar />
-//       <div className='container'>
-//         <Sidebar />
-//         <Routes>
-//           <Route exact path='/' element={<Home />} />
-//           <Route path='/users' element={<UserList />} />
-//           <Route path='/user/:userId' element={<User />} />
-//           <Route path='/newUser' element={<NewUser />} />
-//           <Route path='/products' element={<ProductList />} />
-//           <Route path='/product/:productId' element={<Product />} />
-//           <Route path='/newproduct' element={<NewProduct />} />
-//         </Routes>
-//       </div>
-//     </BrowserRouter>
-//   );
-// }

@@ -3,19 +3,21 @@ import * as Styled from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { publicReq } from '../../helpers/requestMethods';
 import { Add, Remove } from '@material-ui/icons';
-import { addProduct } from '../../redux/cart.redux';
+import { addProduct, increaseProduct } from '../../redux/cart.redux';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Product = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser) || false;
+  const cart = useSelector((state) => state.cart);
   const id = location.pathname.split('/')[2];
   const [product, setProduct] = useState({});
   const [qty, setQty] = useState(1);
   const [color, setColor] = useState('');
   const [size, setSize] = useState('');
   const dispatch = useDispatch();
+  const [valid, setValid] = useState('');
 
   useEffect(() => {
     const getProduct = async () => {
@@ -37,9 +39,28 @@ const Product = () => {
   };
 
   const handleClick = () => {
-    // UPDATE CART
+    // ADD ITEM TO CART
     if (user) {
-      dispatch(addProduct({ ...product, qty, color, size }));
+      if (color === '' && size === '') {
+        setValid(false);
+        alert('Bitte Wähle eine Größe und eine Farbe!');
+      } else {
+        setValid(true);
+        const index = cart.products.findIndex((item) => {
+          return item._id === product._id;
+        });
+        if (
+          cart.products[index]?._id === product._id &&
+          cart.products[index]?.color === color &&
+          cart.products[index]?.size === size
+        ) {
+          dispatch(increaseProduct({ index, product }));
+          navigate('/cart');
+        } else {
+          dispatch(addProduct({ ...product, qty, color, size }));
+          navigate('/cart');
+        }
+      }
     } else {
       navigate('/login');
     }
@@ -67,12 +88,25 @@ const Product = () => {
                   color={color}
                   key={color}
                   onClick={() => setColor(color)}
-                />
+                  style={{
+                    border: valid === false ? ' 1px solid #953b43' : '',
+                  }}
+                ></Styled.FilterColor>
               ))}
             </Styled.Filter>
             <Styled.Filter>
               <Styled.FilterTitle>Größe: </Styled.FilterTitle>
-              <Styled.FilterSize onChange={(e) => setSize(e.target.value)}>
+              <Styled.FilterSize
+                onChange={(e) => setSize(e.target.value)}
+                style={{
+                  border: valid === false ? ' 1px solid #953b43' : '',
+                  color: valid === false ? '#953b43' : '',
+                  backgroundColor: valid === false ? '#f8d7da' : '',
+                }}
+              >
+                <Styled.FilterSizeOption key='sizeFiller'>
+                  Größe wählen
+                </Styled.FilterSizeOption>
                 {product.size?.map((size) => (
                   <Styled.FilterSizeOption key={size}>
                     {size}
