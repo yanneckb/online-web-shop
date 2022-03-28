@@ -22,6 +22,7 @@ const Login = () => {
         <Styled.Form>
           <Styled.Input
             placeholder='Nutzername'
+            name='username'
             onChange={(e) => setUsername(e.target.value)}
             style={
               error
@@ -39,6 +40,8 @@ const Login = () => {
           />
           <Styled.Input
             placeholder='Passwort'
+            type='password'
+            name='password'
             onChange={(e) => setPassword(e.target.value)}
             style={
               error
@@ -60,8 +63,8 @@ const Login = () => {
           {error && (
             <Styled.Error>Nutzername oder Passwort ist falsch!</Styled.Error>
           )}
-          <Styled.Link>Passwort vergessen?</Styled.Link>
-          <Styled.Link>Registrieren</Styled.Link>
+          <Styled.StyledLink to='/'>Passwort vergessen?</Styled.StyledLink>
+          <Styled.StyledLink to='/register'>Registrieren</Styled.StyledLink>
         </Styled.Form>
       </Styled.Wrapper>
     </Styled.Container>

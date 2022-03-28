@@ -13,9 +13,13 @@ const Register = () => {
     username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   });
+  const [checkPw, setCheckPw] = useState(false);
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
+
+  console.log(useSelector((state) => state));
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,11 +30,17 @@ const Register = () => {
   };
   const handleClick = (e) => {
     e.preventDefault();
-    const { firstName, lastName, username, email, password } = user;
-    if ((firstName, lastName, username, email, password)) {
-      register(dispatch, user);
+    const { firstName, lastName, username, email, password, confirmPassword } =
+      user;
+    if (password === confirmPassword) {
+      setCheckPw(false);
+      if ((firstName, lastName, username, email, password)) {
+        register(dispatch, user);
+      } else {
+        return alert('Bitte überprüfe deine Eingaben!');
+      }
     } else {
-      return alert('Ungülitge Eingaben!');
+      setCheckPw(true);
     }
   };
 
@@ -99,6 +109,7 @@ const Register = () => {
 
           <Styled.Input
             placeholder='Passwort'
+            type='password'
             value={user.password}
             name='password'
             onChange={handleChange}
@@ -118,6 +129,7 @@ const Register = () => {
           />
           <Styled.Input
             placeholder='Email'
+            type='email'
             value={user.email}
             name='email'
             onChange={handleChange}
@@ -135,9 +147,10 @@ const Register = () => {
                   }
             }
           />
-          {/* <Styled.Input
+          <Styled.Input
             placeholder='Passwort wiederholen'
-            value={confirmPassword}
+            type='password'
+            value={user.confirmPassword}
             name='confirmPassword'
             onChange={handleChange}
             style={
@@ -153,7 +166,7 @@ const Register = () => {
                     color: '#black',
                   }
             }
-          /> */}
+          />
           <Styled.Agreement>
             Mit der Erstellung eines Kontos stimme ich der Verarbeitung meiner
             personenbezogenen Daten gemäß der <b>DATENSCHUTZERKLÄRUNG</b> zu
@@ -163,13 +176,16 @@ const Register = () => {
           </Styled.Button>
           {error && (
             <Styled.Error>
-              Es ist ein Fehler aufgetreten. Bitte überprüfe die Eingaben
+              Es ist ein Fehler aufgetreten. Bitte überprüfe die Eingaben!
             </Styled.Error>
           )}
+          {checkPw && (
+            <Styled.Error>Deine Passwörter stimmen nicht überein!</Styled.Error>
+          )}
         </Styled.Form>
-        <Styled.Link>
+        <Styled.StyledLink to='/login'>
           Hast du bereits ein Konto? Dann melde dich hier an!
-        </Styled.Link>
+        </Styled.StyledLink>
       </Styled.Wrapper>
     </Styled.Container>
   );

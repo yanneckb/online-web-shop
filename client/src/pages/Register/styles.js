@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { mobile } from '../../responsive';
+import { Link } from 'react-router-dom';
 import { colorGradientBtn, gradientBorder } from '../../styles/global.styles';
 
 export const Container = styled.div`
@@ -58,10 +59,11 @@ export const Button = styled.button`
   ${colorGradientBtn}
 `;
 
-export const Link = styled.a`
+export const StyledLink = styled(Link)`
   margin: 5px 0px;
   font-size: 12px;
   text-decoration: underline;
+  color: black;
   cursor: pointer;
   text-align: center;
   text-transform: uppercase;
