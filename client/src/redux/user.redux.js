@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { userReq } from '../helpers/requestMethods';
 
 // LOGIN REDUX
 const userSlice = createSlice({

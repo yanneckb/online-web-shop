@@ -3,7 +3,8 @@ import * as Styled from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { publicReq } from '../../helpers/requestMethods';
 import { Add, Remove } from '@material-ui/icons';
-import { addProduct, increaseProduct } from '../../redux/cart.redux';
+// import { addProduct, increaseProduct } from '../../redux/cart.redux';
+import { addToCart, updateCart } from '../../redux/cart.redux';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Product = () => {
@@ -54,10 +55,10 @@ const Product = () => {
           cart.products[index]?.color === color &&
           cart.products[index]?.size === size
         ) {
-          dispatch(increaseProduct({ index, product }));
+          dispatch(updateCart({ index, product, type: 'acs' }));
           navigate('/cart');
         } else {
-          dispatch(addProduct({ ...product, qty, color, size }));
+          dispatch(addToCart({ ...product, qty, color, size }));
           navigate('/cart');
         }
       }

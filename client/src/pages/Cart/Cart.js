@@ -3,12 +3,7 @@ import { Add, Delete, Remove } from '@material-ui/icons';
 import * as Styled from './styles';
 import { paymentMethod } from '../../helpers/paymentMethodSVGs';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  deleteProduct,
-  increaseProduct,
-  decreaseProduct,
-  clearCart,
-} from '../../redux/cart.redux';
+import { clearCart, updateCart, getCart } from '../../redux/cart.redux';
 import StripeCheckout from 'react-stripe-checkout';
 import { userReq } from '../../helpers/requestMethods';
 import { useNavigate } from 'react-router-dom';
@@ -29,17 +24,7 @@ const Cart = () => {
     const index = cart.products.findIndex((item) => {
       return item._id === target._id;
     });
-    if (type === 'acs') {
-      dispatch(increaseProduct({ index, product: target }));
-    }
-    if (type === 'decs') {
-      dispatch(decreaseProduct({ index, product: target }));
-    }
-    if (type === 'remove') {
-      dispatch(
-        deleteProduct({ index, products: cart.products, product: target })
-      );
-    }
+    dispatch(updateCart({ index, product: target, type }));
   };
 
   useEffect(() => {
@@ -60,6 +45,7 @@ const Cart = () => {
     <Styled.Container>
       <Styled.Wrapper>
         <Styled.Title>Dein Warenkorb:</Styled.Title>
+        <button onClick={() => dispatch(getCart())}>CART</button>
         <Styled.Top>
           <Styled.TopButton onClick={() => navigate('/')}>
             Nochmal umsehen
@@ -115,7 +101,7 @@ const Cart = () => {
                   </Styled.Product>
                 ))}
                 <Styled.TopButton
-                  style={{ marginTop: '1rem' }}
+                  style={{ marginTop: '1rem', marginBottom: '2rem' }}
                   onClick={() => dispatch(clearCart())}
                 >
                   Warenkorb leeren
@@ -126,7 +112,7 @@ const Cart = () => {
           <Styled.Sidebar>
             <Styled.TotalCart>
               <Styled.TotalTitle>Warenkorb Übersicht</Styled.TotalTitle>
-              <div>
+              <Styled.TopInfo>
                 <Styled.Shipping>
                   <Styled.ShippingText>Versandkosten</Styled.ShippingText>
                   <Styled.ShippingText>0.00€</Styled.ShippingText>
@@ -135,19 +121,21 @@ const Cart = () => {
                   <Styled.TotalText>Gesamtbetrag</Styled.TotalText>
                   <Styled.TotalText>{cart.total}€</Styled.TotalText>
                 </Styled.Total>
-              </div>
-              <StripeCheckout
-                name='shoop-dev-oop'
-                image='#'
-                billingAddress
-                shippingAddress
-                description={`Der Gesamtwert beträgt ${cart.total}€`}
-                amount={cart.total * 100}
-                token={onToken}
-                stripeKey={KEY}
-              >
-                <Styled.BuyButton>Bestellung abschließen</Styled.BuyButton>
-              </StripeCheckout>
+              </Styled.TopInfo>
+              <Styled.BottomInfo>
+                <StripeCheckout
+                  name='shoop-dev-oop'
+                  image='#'
+                  billingAddress
+                  shippingAddress
+                  description={`Der Gesamtwert beträgt ${cart.total}€`}
+                  amount={cart.total * 100}
+                  token={onToken}
+                  stripeKey={KEY}
+                >
+                  <Styled.BuyButton>Bestellung abschließen</Styled.BuyButton>
+                </StripeCheckout>
+              </Styled.BottomInfo>
               <Styled.PaymentContainer>
                 <p>Unsere Zahlungsmethoden</p>
                 <Styled.PaymentMethods>

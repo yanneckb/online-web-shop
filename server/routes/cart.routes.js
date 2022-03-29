@@ -17,9 +17,61 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
+// ADD TO CART
+router.post('/:id', async (req, res) => {
+  const { qty, size, color } = req.body;
+  const productId = req.body._id;
+  console.log(req.body);
+  const userId = req.params.id;
+
+  try {
+    let cart = await Cart.findOne({ userId });
+
+    if (cart) {
+      // IF CART EXISTS FOR USER
+      let itemIndex = cart.products.findIndex((p) => p.productId == productId);
+
+      if (itemIndex > -1) {
+        let itemColor = cart.products[itemIndex]?.color;
+        let itemSize = cart.products[itemIndex]?.size;
+
+        const colorCheck = itemColor[0] === color ? true : false;
+        const sizeCheck = itemSize[0] === size ? true : false;
+        // IF COLOR AND SIZE IS THE SAME
+        if (colorCheck && sizeCheck) {
+          // IF PRODUCT EXISTS IN CART, UPDATE QTY
+          let productItem = cart.products[itemIndex];
+          productItem.qty = qty;
+          cart.products[itemIndex] = productItem;
+        } else {
+          // ADD NEW PRODUCT TO CART
+          cart.products.push({ productId, qty, size, color });
+        }
+      } else {
+        // ADD NEW PRODUCT TO CART
+        cart.products.push({ productId, qty, size, color });
+      }
+      cart = await cart.save();
+      return res.status(201).send(cart);
+    } else {
+      // CREATE NEW CART FOR USER
+      const newCart = await Cart.create({
+        userId,
+        products: [{ productId, qty, color, size }],
+      });
+      return res.status(201).send(newCart);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Irgendwas ist schief gelaufen...');
+  }
+});
+
 // UPDATE
 router.put('/:id', verifyTokenAndAuth, async (req, res) => {
   try {
+    const cart = await Cart.findOne({ userId: req.params.id });
+    const cartId = await cart._id.toString();
     const updatedCart = await Cart.findByIdAndUpdate(
       req.params.id,
       {
@@ -27,7 +79,8 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json(updatedCart);
+    console.log(updatedCart);
+    //res.status(200).json(updatedCart);
   } catch (err) {
     res.status(500).json(err);
   }

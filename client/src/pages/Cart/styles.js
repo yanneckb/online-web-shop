@@ -41,7 +41,7 @@ export const Bottom = styled.div`
 `;
 
 export const Items = styled.div`
-  width: 50rem;
+  width: 40vw;
   ${mobile({ width: '100%' })}
 `;
 
@@ -120,18 +120,28 @@ export const Sidebar = styled.div`
   ${mobile({ width: '100%' })}
 `;
 
+export const TopInfo = styled.div`
+  width: 100%;
+`;
+
+export const BottomInfo = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 export const ShoppingInfo = styled.div``;
 
 export const PaymentContainer = styled.div`
   border: 2px solid black;
-  border-bottom-left-radius: 0.3rem;
-  border-bottom-right-radius: 0.3rem;
+  border-radius: 0.3rem;
   padding-top: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 `;
+// border-bottom-left-radius: 0.3rem;
+// border-bottom-right-radius: 0.3rem;
 
 export const PaymentMethods = styled.div`
   display: flex;
@@ -152,7 +162,6 @@ export const BuyButton = styled.button`
   border-top-left-radius: 0.3rem;
   border-top-right-radius: 0.3rem;
   margin-top: 2rem;
-  width: 100%;
   height: 2.5rem;
   cursor: pointer;
   text-transform: uppercase;

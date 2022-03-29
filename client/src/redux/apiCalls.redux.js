@@ -9,6 +9,7 @@ import {
   registerSuccess,
   registerFailure,
 } from './user.redux';
+import { clearCart } from './cart.redux';
 import { publicReq } from '../helpers/requestMethods';
 
 // // GETS DATA FROM REGISTER FORM AND POST TO AUTH BACKEND
@@ -37,6 +38,7 @@ export const logout = async (dispatch) => {
   dispatch(logoutStart());
   try {
     dispatch(logoutSuccess());
+    dispatch(clearCart());
   } catch (err) {
     dispatch(logoutFailure());
   }
