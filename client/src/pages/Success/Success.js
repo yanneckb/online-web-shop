@@ -4,10 +4,12 @@ import * as Styled from './styles';
 
 const Success = () => {
   const location = useLocation();
-  console.log(location);
+  // console.log(location);
   return (
     <Styled.Container>
-      <h1>Bezahlung erfolgreich abgeschlossen!</h1>
+      <Styled.Title>Yay, deine Bestellung ist eingegangen!</Styled.Title>
+      <Styled.Gif src='https://media.giphy.com/media/GA1s4aZhfe5f2N3fFb/giphy.gif' />
+      <Styled.StyledLink to='/'>Zurück zum Shop</Styled.StyledLink>
     </Styled.Container>
   );
 };

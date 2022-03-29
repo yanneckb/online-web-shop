@@ -16,7 +16,7 @@ import Footer from './components/Footer';
 import Pay from './components/PaymentTest/Pay';
 import ScrollToTop from './helpers/scrollToTop';
 import Account from './pages/Account';
-
+import Orders from './pages/Account/Orders';
 const App = () => {
   const user = useSelector((state) => state.user.currentUser) || false;
 
@@ -49,7 +49,9 @@ const App = () => {
               exact
               path='/account'
               element={!user ? <Navigate to='/login' /> : <Account />}
-            />
+            >
+              <Route path='/account/orders' element={<Orders />} />
+            </Route>
             <Route exact path='/pay' element={<Pay />} />
             <Route exact path='/success' element={<Success />} />
           </Routes>

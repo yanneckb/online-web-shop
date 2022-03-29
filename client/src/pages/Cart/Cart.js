@@ -7,6 +7,7 @@ import {
   deleteProduct,
   increaseProduct,
   decreaseProduct,
+  clearCart,
 } from '../../redux/cart.redux';
 import StripeCheckout from 'react-stripe-checkout';
 import { userReq } from '../../helpers/requestMethods';
@@ -49,6 +50,7 @@ const Cart = () => {
           amount: cart.total * 100,
         });
         navigate('/success');
+        dispatch(clearCart());
       } catch {}
     };
     stripeToken && cart.total >= 1 && makeReq();
@@ -72,45 +74,53 @@ const Cart = () => {
             {cart.products.length === 0 ? (
               <p>Dein Warenkorb ist leer...</p>
             ) : (
-              cart.products.map((product) => (
-                <Styled.Product key={product._id}>
-                  <Styled.ProductDetail>
-                    <Styled.Image src={product.img} />
-                    <Styled.Details>
-                      <Styled.ProductName>
-                        <b>{product.title}</b>
-                      </Styled.ProductName>
-                      <Styled.ProductColor color={product.color} />
-                      <Styled.ProductSize>
-                        Size: {product.size}
-                      </Styled.ProductSize>
-                    </Styled.Details>
-                  </Styled.ProductDetail>
-                  <Styled.InfoContainer>
-                    <p>
-                      {product.qty} x {product.price}€
-                    </p>
-                    <Styled.Amount>
-                      <Styled.AmountButton
-                        onClick={() => handleQty(product, 'acs')}
-                      >
-                        <Add />
-                      </Styled.AmountButton>
-                      <Styled.AmountButton
-                        onClick={() => handleQty(product, 'decs')}
-                      >
-                        <Remove />
-                      </Styled.AmountButton>
-                      <Styled.AmountButton
-                        onClick={() => handleQty(product, 'remove')}
-                      >
-                        <Delete />
-                      </Styled.AmountButton>
-                    </Styled.Amount>
-                    <h3>= {product.price * product.qty}€</h3>
-                  </Styled.InfoContainer>
-                </Styled.Product>
-              ))
+              <div>
+                {cart.products.map((product) => (
+                  <Styled.Product key={product._id}>
+                    <Styled.ProductDetail>
+                      <Styled.Image src={product.img} />
+                      <Styled.Details>
+                        <Styled.ProductName>
+                          <b>{product.title}</b>
+                        </Styled.ProductName>
+                        <Styled.ProductColor color={product.color} />
+                        <Styled.ProductSize>
+                          Size: {product.size}
+                        </Styled.ProductSize>
+                      </Styled.Details>
+                    </Styled.ProductDetail>
+                    <Styled.InfoContainer>
+                      <p>
+                        {product.qty} x {product.price}€
+                      </p>
+                      <Styled.Amount>
+                        <Styled.AmountButton
+                          onClick={() => handleQty(product, 'acs')}
+                        >
+                          <Add />
+                        </Styled.AmountButton>
+                        <Styled.AmountButton
+                          onClick={() => handleQty(product, 'decs')}
+                        >
+                          <Remove />
+                        </Styled.AmountButton>
+                        <Styled.AmountButton
+                          onClick={() => handleQty(product, 'remove')}
+                        >
+                          <Delete />
+                        </Styled.AmountButton>
+                      </Styled.Amount>
+                      <h3>= {product.price * product.qty}€</h3>
+                    </Styled.InfoContainer>
+                  </Styled.Product>
+                ))}
+                <Styled.TopButton
+                  style={{ marginTop: '1rem' }}
+                  onClick={() => dispatch(clearCart())}
+                >
+                  Warenkorb leeren
+                </Styled.TopButton>
+              </div>
             )}
           </Styled.Items>
           <Styled.Sidebar>
