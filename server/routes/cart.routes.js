@@ -18,7 +18,7 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 // ADD TO CART
-router.post('/:id', async (req, res) => {
+router.post('/:id', verifyToken, async (req, res) => {
   const { qty, size, color } = req.body;
   const productId = req.body._id;
   console.log(req.body);
@@ -63,7 +63,7 @@ router.post('/:id', async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).send('Irgendwas ist schief gelaufen...');
+    return res.status(500).send('Irgendwas ist schief gelaufen...');
   }
 });
 
@@ -85,6 +85,23 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+// router.put('/:id', verifyTokenAndAuth, async (req, res) => {
+//   try {
+//     const cart = await Cart.findOne({ userId: req.params.id });
+//     const cartId = await cart._id.toString();
+//     const updatedCart = await Cart.findByIdAndUpdate(
+//       req.params.id,
+//       {
+//         $set: req.body,
+//       },
+//       { new: true }
+//     );
+//     console.log(updatedCart);
+//     //res.status(200).json(updatedCart);
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
 
 // DELETE
 router.delete('/:id', verifyTokenAndAuth, async (req, res) => {

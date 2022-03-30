@@ -21,8 +21,7 @@ export const addToCart = createAsyncThunk(
       `carts/${state.user.currentUser._id}`,
       dispatch
     );
-    console.log('DISPATCH: ', dispatch);
-    console.log('ID: ', state.user.currentUser._id);
+    console.log('RES DATA: ', res.data);
     return res.data;
   }
 );

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import { userReq } from '../helpers/requestMethods';
 
 // LOGIN REDUX
@@ -10,6 +10,9 @@ const userSlice = createSlice({
     error: false,
   },
   reducers: {
+    clearErrors: (state) => {
+      state.error = false;
+    },
     registerStart: (state) => {
       state.isFetching = true;
     },
@@ -56,5 +59,6 @@ export const {
   registerStart,
   registerSuccess,
   registerFailure,
+  clearErrors,
 } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { clearErrors } from './redux/user.redux';
 import Product from './pages/Product';
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
@@ -18,7 +18,12 @@ import ScrollToTop from './helpers/scrollToTop';
 import Account from './pages/Account';
 import Orders from './pages/Account/Orders';
 const App = () => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser) || false;
+
+  useEffect(() => {
+    dispatch(clearErrors());
+  }, []);
 
   return (
     <>

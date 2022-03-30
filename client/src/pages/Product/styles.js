@@ -12,27 +12,38 @@ export const Container = styled.div`
 
 export const Wrapper = styled.div`
   width: 80vw;
-  padding: 5rem;
+  padding: 2rem 5rem;
   display: flex;
   justify-content: center;
-  ${mobile({ padding: '10px', flexDirection: 'column', width: '100%' })}
+
+  ${mobile({
+    padding: '3rem 0.5rem',
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'center',
+  })}
 `;
 
 export const ImgContainer = styled.div`
   display: flex;
   justify-content: center;
+  ${mobile({
+    marginBottom: '2.5rem',
+  })}
 `;
 
 export const Image = styled.img`
-  width: 25vw;
-  object-fit: cover;
-  ${mobile({ height: '40vh' })}
+  width: 400px;
+  object-fit: contain;
+  ${mobile({
+    width: '50%',
+  })}
 `;
 
 export const InfoContainer = styled.div`
   padding: 5rem 10vw;
   width: 45vw;
-  ${mobile({ padding: '10px' })}
+  ${mobile({ padding: '10px', width: '90%' })}
 `;
 
 export const Title = styled.h1`

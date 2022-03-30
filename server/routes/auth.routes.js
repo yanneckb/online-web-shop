@@ -2,22 +2,52 @@ const router = require('express').Router();
 const User = require('../models/user');
 const CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const {
+  verifyToken,
+  verifyTokenAndAuth,
+  verifyTokenAndAdmin,
+} = require('../middleware');
 
 //REGISTER
 router.post('/register', async (req, res) => {
+  const { firstName, lastName, username, email, password } = req.body;
+
+  if (!(firstName && lastName && username && email && password)) {
+    return res.status(400).send('Alle Felder müssen ausgefüllt sein');
+  }
+  const oldEmail = await User.findOne({ email });
+  const oldUsername = await User.findOne({ username });
+  if (oldEmail) {
+    return res
+      .status(400)
+      .send('Email existiert bereits. Bitte melde dich an!');
+  }
+  if (oldUsername) {
+    return res
+      .status(400)
+      .send('Nutzername existiert bereits. Bitte melde dich an!');
+  }
   const newUser = new User({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    username: req.body.username,
-    email: req.body.email,
+    firstName: firstName,
+    lastName: lastName,
+    username: username,
+    email: email,
     password: CryptoJS.AES.encrypt(
-      req.body.password,
+      password,
       process.env.PASSWORD_SECRET
     ).toString(),
   });
+  const accessToken = jwt.sign(
+    {
+      id: newUser._id,
+      isAdmin: newUser.isAdmin,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
   try {
     const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+    res.status(201).json({ savedUser, accessToken });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -25,9 +55,17 @@ router.post('/register', async (req, res) => {
 
 //LOGIN
 router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!(username && password)) {
+    return res.status(400).send('Alle Felder müssen ausgefüllt sein');
+  }
+
   try {
-    const user = await User.findOne({ username: req.body.username });
-    !user && res.status(401).json('Nutzername oder Passwort stimmen nicht!');
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json('Nutzername oder Passwort stimmen nicht!');
+    }
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
@@ -43,12 +81,10 @@ router.post('/login', async (req, res) => {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '3d' }
+      { expiresIn: '5h' }
     );
 
-    const { password, ...others } = user._doc;
-
-    res.status(200).json({ ...others, accessToken });
+    res.status(200).json({ user, accessToken });
   } catch (err) {
     res.status(500).json(err);
   }

@@ -35,29 +35,29 @@ const Products = ({ category, filters, sort }) => {
       );
   }, [products, category, filters]);
 
-  // useEffect(() => {
-  //   if (sort === 'newest') {
-  //     setfilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => a.createdAt - b.createdAt)
-  //     );
-  //   } else if (sort === 'asc') {
-  //     setfilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => a.price - b.price)
-  //     );
-  //   } else {
-  //     setfilteredProducts((prev) =>
-  //       [...prev].sort((a, b) => b.price - a.price)
-  //     );
-  //   }
-  // });
+  useEffect(() => {
+    if (sort === 'newest') {
+      setfilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.createdAt - b.createdAt)
+      );
+    } else if (sort === 'asc') {
+      setfilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.price - b.price)
+      );
+    } else {
+      setfilteredProducts((prev) =>
+        [...prev].sort((a, b) => b.price - a.price)
+      );
+    }
+  }, []);
 
   return (
     <Styled.Container>
       {category
-        ? filteredProducts.map((item) => <Product item={item} key={item.id} />)
+        ? filteredProducts.map((item) => <Product item={item} key={item._id} />)
         : products
             .slice(0, 8)
-            .map((item) => <Product item={item} key={item.id} />)}
+            .map((item) => <Product item={item} key={item._id} />)}
     </Styled.Container>
   );
 };
