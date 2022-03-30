@@ -3,9 +3,8 @@ const jwt = require('jsonwebtoken');
 // VERIFY USER TOKEN
 module.exports.verifyToken = (req, res, next) => {
   const authToken = req.query.token || req.body.token || req.headers.token;
-
   if (authToken) {
-    const token = authHeader.split(' ')[1];
+    const token = authToken.split(' ')[1];
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {

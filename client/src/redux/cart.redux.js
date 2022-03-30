@@ -7,8 +7,7 @@ export const getCart = createAsyncThunk(
   'carts/get',
   async (dispatch, { getState }) => {
     const state = getState();
-    const res = await userReq.get(`carts/find/${state.user.currentUser._id}`);
-    console.log(res.data);
+    const res = await userReq.get(`carts/find/${dispatch}`);
     return res.data;
   }
 );
@@ -58,82 +57,82 @@ const cartSlice = createSlice({
   },
   extraReducers: {
     // GET CART
-    [getCart.pending]: (state) => {
+    [getCart.pending]: (state, action) => {
       state.pending = true;
       state.error = false;
     },
     [getCart.fullfilled]: (state, action) => {
       console.log('PAYLOAD: ', action.payload);
-      state.cartData.products = action.payload.products;
-      state.cartData.qty = action.payload.qty;
-      state.cartData.total = action.payload.total;
+      state.cart.cartData.products = action.payload.products;
+      state.cart.cartData.qty = action.payload.qty;
+      state.cart.cartData.total = action.payload.total;
       state.pending = true;
     },
-    [getCart.rejected]: (state) => {
+    [getCart.rejected]: (state, action) => {
       state.pending = false;
       state.error = true;
     },
     // ADD ITEM TO CART
-    [addToCart.pending]: (state) => {
+    [addToCart.pending]: (state, action) => {
       state.pending = true;
       state.error = false;
     },
     [addToCart.fullfilled]: (state, action) => {
       state.pending = true;
-      state.cartData.qty += 1;
-      state.cartData.products.push(action.payload);
-      state.cartData.total += action.payload.price * action.payload.qty;
+      state.cart.cartData.qty += 1;
+      state.cart.cartData.products.push(action.payload);
+      state.cart.cartData.total += action.payload.price * action.payload.qty;
     },
-    [addToCart.rejected]: (state) => {
+    [addToCart.rejected]: (state, action) => {
       state.pending = false;
       state.error = true;
     },
     // UPDATE ITEMS IN CART
-    [updateCart.pending]: (state) => {
+    [updateCart.pending]: (state, action) => {
       state.pending = true;
       state.error = false;
     },
     [updateCart.fullfilled]: (state, action) => {
       state.pending = true;
       if (action.payload.type === 'acs') {
-        if (state.cartData.products[action.payload.index].qty < 99) {
-          state.cartData.products[action.payload.index].qty += 1;
-          state.cartData.total += action.payload.product.price;
+        if (state.cart.cartData.products[action.payload.index].qty < 99) {
+          state.cart.cartData.products[action.payload.index].qty += 1;
+          state.cart.cartData.total += action.payload.product.price;
         }
       }
       if (action.payload.type === 'decs') {
-        if (state.cartData.products[action.payload.index].qty > 0) {
-          state.cartData.products[action.payload.index].qty -= 1;
-          state.cartData.total -= action.payload.product.price;
+        if (state.cart.cartData.products[action.payload.index].qty > 0) {
+          state.cart.cartData.products[action.payload.index].qty -= 1;
+          state.cart.cartData.total -= action.payload.product.price;
         }
       }
       if (action.payload.type === 'remove') {
-        state.cartData.total -=
-          state.cartData.products[action.payload.index].price *
-          state.cartData.products[action.payload.index].qty;
-        state.cartData.qty = state.cartData.qty - 1;
-        current(state).cartData.products = state.cartData.products.splice(
+        state.cart.cartData.total -=
+          state.cart.cartData.products[action.payload.index].price *
+          state.cart.cartData.products[action.payload.index].qty;
+        state.cart.cartData.qty = state.cart.cartData.qty - 1;
+        current(state).cartData.products = state.cart.cartData.products.splice(
           action.payload.index,
           1
         );
       }
     },
-    [updateCart.rejected]: (state) => {
+    [updateCart.rejected]: (state, action) => {
       state.pending = false;
       state.error = true;
     },
     // CLEAR CART
-    [clearCart.pending]: (state) => {
+    [clearCart.pending]: (state, action) => {
       state.pending = true;
       state.error = false;
     },
     [clearCart.fullfilled]: (state, action) => {
       state.pending = true;
-      state.cartData.total = 0;
-      state.cartData.qty = 0;
-      state.cartData.products = [];
+      state.cart.cartData.total = 0;
+      state.cart.cartData.qty = 0;
+      state.cart.cartData.products = [];
     },
-    [clearCart.rejected]: (state) => {
+    [clearCart.rejected]: (state, action) => {
       state.pending = false;
       state.error = true;
     },

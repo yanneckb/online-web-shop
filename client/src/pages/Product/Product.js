@@ -11,7 +11,7 @@ const Product = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser) || false;
-  const cart = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart.cartData);
   const id = location.pathname.split('/')[2];
   const [product, setProduct] = useState({});
   const [qty, setQty] = useState(1);
@@ -47,6 +47,7 @@ const Product = () => {
         alert('Bitte Wähle eine Größe und eine Farbe!');
       } else {
         setValid(true);
+        console.log(cart);
         const index = cart.products.findIndex((item) => {
           return item._id === product._id;
         });
@@ -90,7 +91,7 @@ const Product = () => {
                   key={color}
                   onClick={() => setColor(color)}
                   style={{
-                    border: valid === false ? ' 1px solid #953b43' : '',
+                    border: valid === false ? ' 1px solid #953b43' : 'none',
                   }}
                 ></Styled.FilterColor>
               ))}

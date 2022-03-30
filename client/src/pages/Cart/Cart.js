@@ -11,7 +11,10 @@ import { useNavigate } from 'react-router-dom';
 const KEY = process.env.REACT_APP_STRIPE;
 
 const Cart = () => {
-  const { cart, qty, total } = useSelector((state) => state);
+  const { qty, total } = useSelector((state) => state);
+  const cart = useSelector((state) => state.cart.cartData);
+  const userId = useSelector((state) => state.user.currentUser.user._id);
+  const state = useSelector((state) => state);
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,17 +38,21 @@ const Cart = () => {
           amount: cart.total * 100,
         });
         navigate('/success');
-        dispatch(clearCart());
+        dispatch(clearCart(userId));
       } catch {}
     };
     stripeToken && cart.total >= 1 && makeReq();
   }, [stripeToken, cart.total, navigate]);
 
+  useEffect(() => {
+    dispatch(getCart(userId));
+    console.log(userId);
+  }, []);
+
   return (
     <Styled.Container>
       <Styled.Wrapper>
         <Styled.Title>Dein Warenkorb:</Styled.Title>
-        <button onClick={() => dispatch(getCart())}>CART</button>
         <Styled.Top>
           <Styled.TopButton onClick={() => navigate('/')}>
             Nochmal umsehen
