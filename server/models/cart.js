@@ -12,8 +12,8 @@ const cartSchema = new mongoose.Schema(
         color: { type: Array },
       },
     ],
-    // qty: { type: Number, default: 0 },
-    // total: { type: Number, default: 0 },
+    qty: { type: Number, default: 0 },
+    total: { type: Number, default: 0 },
   },
   {
     timestamps: true,

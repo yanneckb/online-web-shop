@@ -18,10 +18,9 @@ router.post('/', verifyToken, async (req, res) => {
 });
 
 // ADD TO CART
-router.post('/:id', verifyToken, async (req, res) => {
+router.post('/:id', verifyTokenAndAuth, async (req, res) => {
   const { qty, size, color } = req.body;
   const productId = req.body._id;
-  console.log(req.body);
   const userId = req.params.id;
 
   try {

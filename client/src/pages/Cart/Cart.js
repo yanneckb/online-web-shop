@@ -27,7 +27,7 @@ const Cart = () => {
     const index = cart.products.findIndex((item) => {
       return item._id === target._id;
     });
-    dispatch(updateCart({ index, product: target, type }));
+    dispatch(updateCart({ userId, index, product: target, type }));
   };
 
   useEffect(() => {
@@ -46,7 +46,6 @@ const Cart = () => {
 
   useEffect(() => {
     dispatch(getCart(userId));
-    console.log(userId);
   }, []);
 
   return (

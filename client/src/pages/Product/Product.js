@@ -11,6 +11,7 @@ const Product = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.currentUser) || false;
+  const userId = user.user?._id;
   const cart = useSelector((state) => state.cart.cartData);
   const id = location.pathname.split('/')[2];
   const [product, setProduct] = useState({});
@@ -59,7 +60,7 @@ const Product = () => {
           dispatch(updateCart({ index, product, type: 'acs' }));
           navigate('/cart');
         } else {
-          dispatch(addToCart({ ...product, qty, color, size }));
+          dispatch(addToCart({ ...product, qty, color, size, userId }));
           navigate('/cart');
         }
       }

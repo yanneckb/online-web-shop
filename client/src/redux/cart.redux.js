@@ -4,41 +4,33 @@ import { userReq } from '../helpers/requestMethods';
 
 // GET CART FROM USER ID
 export const getCart = createAsyncThunk(
-  'carts/get',
-  async (dispatch, { getState }) => {
-    const state = getState();
+  'carts/getCart',
+  async (dispatch, getState) => {
     const res = await userReq.get(`carts/find/${dispatch}`);
     return res.data;
   }
 );
 // ADD ITEM TO USER CART
 export const addToCart = createAsyncThunk(
-  'carts/add',
-  async (dispatch, { getState }) => {
-    const state = getState();
-    const res = await userReq.post(
-      `carts/${state.user.currentUser._id}`,
-      dispatch
-    );
-    console.log('RES DATA: ', res.data);
+  'carts/addToCart',
+  async (dispatch, getState) => {
+    const res = await userReq.post(`carts/${dispatch.userId}`, dispatch);
     return res.data;
   }
 );
 // UPDATES ITEM OF USER CART
 export const updateCart = createAsyncThunk(
-  'carts/update',
-  async (dispatch, { getState }) => {
-    const state = getState();
-    const res = await userReq.put(`carts/${state.user.currentUser._id}`);
+  'carts/updateCart',
+  async (dispatch, getState) => {
+    const res = await userReq.put(`carts/${dispatch.userId}`);
     return res.data;
   }
 );
 // CLEARS USER CART
 export const clearCart = createAsyncThunk(
-  'carts/clear',
-  async (dispatch, { getState }) => {
-    const state = getState();
-    const res = await userReq.delete(`carts/${state.user.currentUser._id}`);
+  'carts/clearCart',
+  async (dispatch, getState) => {
+    const res = await userReq.delete(`carts/${dispatch}`);
     return res.data;
   }
 );
@@ -62,11 +54,10 @@ const cartSlice = createSlice({
       state.error = false;
     },
     [getCart.fullfilled]: (state, action) => {
-      console.log('PAYLOAD: ', action.payload);
+      state.pending = false;
       state.cart.cartData.products = action.payload.products;
       state.cart.cartData.qty = action.payload.qty;
       state.cart.cartData.total = action.payload.total;
-      state.pending = true;
     },
     [getCart.rejected]: (state, action) => {
       state.pending = false;
@@ -78,7 +69,7 @@ const cartSlice = createSlice({
       state.error = false;
     },
     [addToCart.fullfilled]: (state, action) => {
-      state.pending = true;
+      state.pending = false;
       state.cart.cartData.qty += 1;
       state.cart.cartData.products.push(action.payload);
       state.cart.cartData.total += action.payload.price * action.payload.qty;
@@ -93,7 +84,7 @@ const cartSlice = createSlice({
       state.error = false;
     },
     [updateCart.fullfilled]: (state, action) => {
-      state.pending = true;
+      state.pending = false;
       if (action.payload.type === 'acs') {
         if (state.cart.cartData.products[action.payload.index].qty < 99) {
           state.cart.cartData.products[action.payload.index].qty += 1;
@@ -127,7 +118,7 @@ const cartSlice = createSlice({
       state.error = false;
     },
     [clearCart.fullfilled]: (state, action) => {
-      state.pending = true;
+      state.pending = false;
       state.cart.cartData.total = 0;
       state.cart.cartData.qty = 0;
       state.cart.cartData.products = [];
