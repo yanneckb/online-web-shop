@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect, useContext } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearErrors } from './redux/user.redux';
+import { logout } from './redux/apiCalls.redux';
 import Product from './pages/Product';
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
@@ -17,13 +18,35 @@ import Pay from './components/PaymentTest/Pay';
 import ScrollToTop from './helpers/scrollToTop';
 import Account from './pages/Account';
 import Orders from './pages/Account/Orders';
+import jwt from 'jsonwebtoken';
+
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser) || false;
 
+  // CLEARS LOGIN/REGISTER ERRORS AND LOGOUT IF TOKEN EXPIRED
   useEffect(() => {
     dispatch(clearErrors());
+    if (user) {
+      const jwtDate = jwt.decode(user.accessToken).exp * 1000;
+      const currentDate = Date.now();
+      if (currentDate > jwtDate) {
+        LogoutAndReload();
+      }
+    }
   }, []);
+
+  const LogoutAndReload = async () => {
+    await logout(dispatch);
+    window.location.reload();
+  };
+
+  // REFRESH PAGE ON ROUTE CHANGE
+  // let appInfo = useContext(AppInfoContext);
+  // let location = useLocation();
+  // useEffect(() => {
+  //   window.location.reload();
+  // }, [location.pathname]);
 
   return (
     <>
