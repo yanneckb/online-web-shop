@@ -7,6 +7,7 @@ import { clearCart, updateCart, getCart } from '../../redux/cart.redux';
 import StripeCheckout from 'react-stripe-checkout';
 import { userReq } from '../../helpers/requestMethods';
 import { useNavigate } from 'react-router-dom';
+import { publicReq } from '../../helpers/requestMethods';
 
 const KEY = process.env.REACT_APP_STRIPE;
 
@@ -16,20 +17,38 @@ const Cart = () => {
   const userId = useSelector((state) => state.user.currentUser.user._id);
   const state = useSelector((state) => state);
   const [stripeToken, setStripeToken] = useState(null);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // ON PAGE LOAD GET CART FROM DB AND PUSH INTO PRODUCTS ARRAY
+  useEffect(() => {
+    if (cart.products.length > 0) {
+      dispatch(getCart(userId));
+      async () => {
+        setProducts([]);
+        const productArray = [];
+        for (let i = 0; i < cart.products.length; i++) {
+          const res = await publicReq.get(
+            `/products/find/${cart.products[i].productId}`
+          );
+          productArray.push({
+            ...cart.products[i],
+            img: res.data.img,
+            price: res.data.price,
+            title: res.data.title,
+          });
+        }
+        setProducts([...productArray]);
+      };
+    }
+  }, []);
 
   const onToken = (token) => {
     setStripeToken(token);
   };
 
-  const handleQty = (target, type) => {
-    const index = cart.products.findIndex((item) => {
-      return item._id === target._id;
-    });
-    dispatch(updateCart({ userId, index, product: target, type }));
-  };
-
+  // STRIPE CHECKOUT
   useEffect(() => {
     const makeReq = async () => {
       try {
@@ -44,9 +63,12 @@ const Cart = () => {
     stripeToken && cart.total >= 1 && makeReq();
   }, [stripeToken, cart.total, navigate]);
 
-  useEffect(() => {
-    dispatch(getCart(userId));
-  }, []);
+  const handleChange = (target, type) => {
+    const index = cart.products.findIndex((item) => {
+      return item._id === target._id;
+    });
+    dispatch(updateCart({ userId, index, product: target, type }));
+  };
 
   return (
     <Styled.Container>
@@ -63,11 +85,11 @@ const Cart = () => {
         </Styled.Top>
         <Styled.Bottom>
           <Styled.Items>
-            {cart.products.length === 0 ? (
+            {products.length === 0 ? (
               <p>Dein Warenkorb ist leer...</p>
             ) : (
               <div>
-                {cart.products.map((product) => (
+                {products.map((product) => (
                   <Styled.Product key={product._id}>
                     <Styled.ProductDetail>
                       <Styled.Image src={product.img} />
@@ -87,17 +109,17 @@ const Cart = () => {
                       </p>
                       <Styled.Amount>
                         <Styled.AmountButton
-                          onClick={() => handleQty(product, 'acs')}
+                          onClick={() => handleChange(product, 'acs')}
                         >
                           <Add />
                         </Styled.AmountButton>
                         <Styled.AmountButton
-                          onClick={() => handleQty(product, 'decs')}
+                          onClick={() => handleChange(product, 'decs')}
                         >
                           <Remove />
                         </Styled.AmountButton>
                         <Styled.AmountButton
-                          onClick={() => handleQty(product, 'remove')}
+                          onClick={() => handleChange(product, 'remove')}
                         >
                           <Delete />
                         </Styled.AmountButton>

@@ -60,7 +60,17 @@ const Product = () => {
           dispatch(updateCart({ index, product, type: 'acs' }));
           navigate('/cart');
         } else {
-          dispatch(addToCart({ ...product, qty, color, size, userId }));
+          dispatch(
+            addToCart({
+              ...product,
+              qty,
+              color,
+              size,
+              productId: id,
+              userId,
+              price: product.price,
+            })
+          );
           navigate('/cart');
         }
       }

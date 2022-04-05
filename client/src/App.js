@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useRef, usePrevious } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearErrors } from './redux/user.redux';
@@ -26,27 +26,42 @@ const App = () => {
 
   // CLEARS LOGIN/REGISTER ERRORS AND LOGOUT IF TOKEN EXPIRED
   useEffect(() => {
-    dispatch(clearErrors());
-    if (user) {
-      const jwtDate = jwt.decode(user.accessToken).exp * 1000;
-      const currentDate = Date.now();
-      if (currentDate > jwtDate) {
-        LogoutAndReload();
+    async () => {
+      dispatch(clearErrors());
+      if (user) {
+        const jwtDate = jwt.decode(user.accessToken).exp * 1000;
+        const currentDate = Date.now();
+        if (currentDate > jwtDate) {
+          //LogoutAndReload();
+          await logout(dispatch);
+          window.location.reload();
+        }
       }
-    }
+    };
   }, []);
 
-  const LogoutAndReload = async () => {
-    await logout(dispatch);
-    window.location.reload();
+  // REFRESH PAGE ON ROUTE CHANGE
+  const location = useLocation();
+  const prevLocation = usePrevious(location);
+
+  const usePrevious = (value) => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  };
+  const useLocationChange = (action) => {
+    useEffect(() => {
+      action(location, prevLocation);
+    }, [location]);
   };
 
-  // REFRESH PAGE ON ROUTE CHANGE
-  // let appInfo = useContext(AppInfoContext);
-  // let location = useLocation();
-  // useEffect(() => {
-  //   window.location.reload();
-  // }, [location.pathname]);
+  useEffect(() => {
+    if (location !== prevLocation) {
+      window.location.reload();
+    }
+  }, [location]);
 
   return (
     <>
@@ -82,6 +97,27 @@ const App = () => {
             </Route>
             <Route exact path='/pay' element={<Pay />} />
             <Route exact path='/success' element={<Success />} />
+            // NO MATCH ROUTE! OTHER ROUTES ABOVE
+            <Route
+              path='*'
+              element={
+                <div
+                  style={{
+                    padding: '1rem',
+                    minHeight: '60vh',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <h2 style={{ marginBottom: '1.5rem' }}>
+                    Bitte gehen Sie weiter, hier gibt es nichts zu sehen!
+                  </h2>
+                  <img src='https://media.giphy.com/media/12Zv57OF16CQg/giphy.gif' />
+                </div>
+              }
+            />
           </Routes>
         </div>
         <Newsletter />

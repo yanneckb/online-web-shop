@@ -22,16 +22,18 @@ export const addToCart = createAsyncThunk(
 export const updateCart = createAsyncThunk(
   'carts/updateCart',
   async (dispatch, getState) => {
-    const res = await userReq.put(`carts/${dispatch.userId}`);
-    return res.data;
+    const res = await userReq.put(`carts/${dispatch.userId}`, dispatch);
+    console.log('RES: ', res);
+    return { ...res.data, type: dispatch.type };
   }
 );
 // CLEARS USER CART
 export const clearCart = createAsyncThunk(
   'carts/clearCart',
   async (dispatch, getState) => {
+    console.log('TARGET: ', product);
     const res = await userReq.delete(`carts/${dispatch}`);
-    return res.data;
+    return { ...res.data, type };
   }
 );
 
@@ -53,11 +55,11 @@ const cartSlice = createSlice({
       state.pending = true;
       state.error = false;
     },
-    [getCart.fullfilled]: (state, action) => {
+    [getCart.fulfilled]: (state, action) => {
+      state.cartData.products = action.payload.products;
+      state.cartData.qty = action.payload.qty;
+      state.cartData.total = action.payload.total;
       state.pending = false;
-      state.cart.cartData.products = action.payload.products;
-      state.cart.cartData.qty = action.payload.qty;
-      state.cart.cartData.total = action.payload.total;
     },
     [getCart.rejected]: (state, action) => {
       state.pending = false;
@@ -68,11 +70,11 @@ const cartSlice = createSlice({
       state.pending = true;
       state.error = false;
     },
-    [addToCart.fullfilled]: (state, action) => {
+    [addToCart.fulfilled]: (state, action) => {
+      state.cartData.qty += 1;
+      state.cartData.products.push(action.payload);
+      state.cartData.total += action.payload.price * action.payload.qty;
       state.pending = false;
-      state.cart.cartData.qty += 1;
-      state.cart.cartData.products.push(action.payload);
-      state.cart.cartData.total += action.payload.price * action.payload.qty;
     },
     [addToCart.rejected]: (state, action) => {
       state.pending = false;
@@ -83,30 +85,26 @@ const cartSlice = createSlice({
       state.pending = true;
       state.error = false;
     },
-    [updateCart.fullfilled]: (state, action) => {
-      state.pending = false;
+    [updateCart.fulfilled]: (state, action) => {
+      console.log('PAYLOAD: ', action.payload);
       if (action.payload.type === 'acs') {
-        if (state.cart.cartData.products[action.payload.index].qty < 99) {
-          state.cart.cartData.products[action.payload.index].qty += 1;
-          state.cart.cartData.total += action.payload.product.price;
+        if (state.cartData.products[action.payload.index].qty < 99) {
+          state.cartData.products[action.payload.index].qty += 1;
+          state.cartData.total += action.payload.product.price;
         }
       }
       if (action.payload.type === 'decs') {
-        if (state.cart.cartData.products[action.payload.index].qty > 0) {
-          state.cart.cartData.products[action.payload.index].qty -= 1;
-          state.cart.cartData.total -= action.payload.product.price;
+        if (state.cartData.products[action.payload.index].qty > 0) {
+          state.cartData.products[action.payload.index].qty -= 1;
+          state.cartData.total -= action.payload.product.price;
         }
       }
       if (action.payload.type === 'remove') {
-        state.cart.cartData.total -=
-          state.cart.cartData.products[action.payload.index].price *
-          state.cart.cartData.products[action.payload.index].qty;
-        state.cart.cartData.qty = state.cart.cartData.qty - 1;
-        current(state).cartData.products = state.cart.cartData.products.splice(
-          action.payload.index,
-          1
-        );
+        state.cartData.total = action.payload.total;
+        state.cartData.qty = action.payload.qty;
+        state.cartData.products = action.payload.products;
       }
+      state.pending = false;
     },
     [updateCart.rejected]: (state, action) => {
       state.pending = false;
@@ -117,11 +115,11 @@ const cartSlice = createSlice({
       state.pending = true;
       state.error = false;
     },
-    [clearCart.fullfilled]: (state, action) => {
+    [clearCart.fulfilled]: (state, action) => {
+      state.cartData.total = 0;
+      state.cartData.qty = 0;
+      state.cartData.products = [];
       state.pending = false;
-      state.cart.cartData.total = 0;
-      state.cart.cartData.qty = 0;
-      state.cart.cartData.products = [];
     },
     [clearCart.rejected]: (state, action) => {
       state.pending = false;
@@ -216,7 +214,7 @@ export default cartSlice.reducer;
 //       state.pending = true;
 //       state.error = false;
 //     },
-//     [getCart.fullfilled]: (state, action) => {
+//     [getCart.fulfilled]: (state, action) => {
 //       state.pending = true;
 //       state.products = action.payload;
 //     },

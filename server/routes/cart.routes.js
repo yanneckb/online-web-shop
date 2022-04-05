@@ -19,7 +19,7 @@ router.post('/', verifyToken, async (req, res) => {
 
 // ADD TO CART
 router.post('/:id', verifyTokenAndAuth, async (req, res) => {
-  const { qty, size, color } = req.body;
+  const { qty, size, color, price } = req.body;
   const productId = req.body._id;
   const userId = req.params.id;
 
@@ -27,6 +27,7 @@ router.post('/:id', verifyTokenAndAuth, async (req, res) => {
     let cart = await Cart.findOne({ userId });
 
     if (cart) {
+      const cartId = await cart._id.toString();
       // IF CART EXISTS FOR USER
       let itemIndex = cart.products.findIndex((p) => p.productId == productId);
 
@@ -39,29 +40,93 @@ router.post('/:id', verifyTokenAndAuth, async (req, res) => {
         // IF COLOR AND SIZE IS THE SAME
         if (colorCheck && sizeCheck) {
           // IF PRODUCT EXISTS IN CART, UPDATE QTY
-          let productItem = cart.products[itemIndex];
-          productItem.qty = qty;
-          cart.products[itemIndex] = productItem;
+          const updatedQty = await (cart.products[itemIndex].qty + qty);
+          const updatedTotal = cart.total + qty * price;
+          const updatedProduct = {
+            productId,
+            qty: updatedQty,
+            size,
+            color,
+            price,
+          };
+          cart.products[itemIndex] = await updatedProduct;
+          const updatedData = {
+            userId: cart.userId,
+            products: cart.products,
+            qty: cart.qty,
+            total: updatedTotal,
+          };
+          const updatedCart = await Cart.findByIdAndUpdate(
+            cartId,
+            { ...updatedData },
+            { new: true }
+          );
+          await updatedCart.save();
+          console.log(updatedCart);
+          res.status(200).send(updatedCart);
         } else {
           // ADD NEW PRODUCT TO CART
-          cart.products.push({ productId, qty, size, color });
+          await cart.products.push({
+            productId,
+            qty,
+            size,
+            color,
+            price,
+          });
+          const updatedQty = cart.products.length;
+          const updatedTotal = cart.total + qty * price;
+          const updatedData = {
+            userId: cart.userId,
+            products: cart.products,
+            qty: updatedQty,
+            total: updatedTotal,
+          };
+          const updatedCart = await Cart.findByIdAndUpdate(
+            cartId,
+            { ...updatedData },
+            { new: true }
+          );
+          await updatedCart.save();
+          res.status(200).send(updatedCart);
         }
       } else {
         // ADD NEW PRODUCT TO CART
-        cart.products.push({ productId, qty, size, color });
+        await cart.products.push({
+          productId,
+          qty,
+          size,
+          color,
+          price,
+        });
+        const updatedQty = cart.products.length;
+        const updatedTotal = cart.total + qty * price;
+        const updatedData = {
+          userId: cart.userId,
+          products: cart.products,
+          qty: updatedQty,
+          total: updatedTotal,
+        };
+        const updatedCart = await Cart.findByIdAndUpdate(
+          cartId,
+          { ...updatedData },
+          { new: true }
+        );
+        await updatedCart.save();
+        console.log('UPDATED CART: ', updatedCart);
+        res.status(200).send(updatedCart);
       }
-      cart = await cart.save();
-      return res.status(201).send(cart);
     } else {
       // CREATE NEW CART FOR USER
       const newCart = await Cart.create({
         userId,
-        products: [{ productId, qty, color, size }],
+        products: [{ productId, qty, color, size, price }],
+        qty: 1,
+        total: qty * price,
       });
       return res.status(201).send(newCart);
     }
   } catch (err) {
-    console.log(err);
+    console.log('ADD TO CART ERROR: ', err);
     return res.status(500).send('Irgendwas ist schief gelaufen...');
   }
 });
@@ -69,38 +134,34 @@ router.post('/:id', verifyTokenAndAuth, async (req, res) => {
 // UPDATE
 router.put('/:id', verifyTokenAndAuth, async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.id });
+    const { type, product, index } = req.body;
+    const { id } = req.params;
+    const cart = await Cart.findOne({ userId: id });
     const cartId = await cart._id.toString();
-    const updatedCart = await Cart.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-    console.log(updatedCart);
-    //res.status(200).json(updatedCart);
+    if (type === 'remove') {
+      await cart.products.splice(index, 1);
+      const updatedQty = cart.products.length;
+      const updatedTotal = cart.total - product.qty * product.price;
+      const updatedData = {
+        userId: cart.userId,
+        products: cart.products,
+        qty: updatedQty,
+        total: updatedTotal,
+      };
+      const updatedCart = await Cart.findByIdAndUpdate(
+        cartId,
+        { ...updatedData },
+        { new: true }
+      );
+      await updatedCart.save();
+      console.log(updatedCart);
+      res.status(200).send(updatedCart);
+    }
   } catch (err) {
+    console.log('UPDATE CART ERROR: ', err);
     res.status(500).json(err);
   }
 });
-// router.put('/:id', verifyTokenAndAuth, async (req, res) => {
-//   try {
-//     const cart = await Cart.findOne({ userId: req.params.id });
-//     const cartId = await cart._id.toString();
-//     const updatedCart = await Cart.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         $set: req.body,
-//       },
-//       { new: true }
-//     );
-//     console.log(updatedCart);
-//     //res.status(200).json(updatedCart);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
 
 // DELETE
 router.delete('/:id', verifyTokenAndAuth, async (req, res) => {
@@ -108,6 +169,7 @@ router.delete('/:id', verifyTokenAndAuth, async (req, res) => {
     await Cart.findByIdAndDelete(req.params.id);
     res.status(200).json('Warenkorb wurde geleert!');
   } catch (err) {
+    console.log('DELETE ERROR: ', err);
     res.status(500).json(err);
   }
 });
@@ -118,6 +180,7 @@ router.get('/find/:userId', verifyTokenAndAuth, async (req, res) => {
     const cart = await Cart.findOne({ userId: req.params.userId });
     res.status(200).json(cart);
   } catch (err) {
+    console.log('GET CART ERROR: ', err);
     res.status(500).json(err);
   }
 });
@@ -128,6 +191,7 @@ router.get('/', verifyTokenAndAdmin, async (req, res) => {
     const carts = await Cart.find();
     res.status(200).json(carts);
   } catch (err) {
+    console.log('GET ALL CARTS ERROR: ', err);
     res.status(500).json(err);
   }
 });
