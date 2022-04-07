@@ -3,13 +3,16 @@ import axios from 'axios';
 import * as Styled from './styles';
 import { categories, popularProducts } from '../../data';
 import Product from '../Product';
+import Loader from '../Loader';
 
 const Products = ({ category, filters, sort }) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setfilteredProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getProducts = async () => {
+      setIsLoading(true);
       try {
         const res = await axios.get(
           category
@@ -17,6 +20,7 @@ const Products = ({ category, filters, sort }) => {
             : 'http://localhost:8080/api/products'
         );
         setProducts(res.data);
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
       }
@@ -53,11 +57,28 @@ const Products = ({ category, filters, sort }) => {
 
   return (
     <Styled.Container>
-      {category
-        ? filteredProducts.map((item) => <Product item={item} key={item._id} />)
-        : products
-            .slice(0, 8)
-            .map((item) => <Product item={item} key={item._id} />)}
+      {isLoading ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '40vh',
+          }}
+        >
+          <Loader />
+        </div>
+      ) : (
+        <Styled.ProductContainer>
+          {category
+            ? filteredProducts.map((item) => (
+                <Product item={item} key={item._id} />
+              ))
+            : products
+                .slice(0, 8)
+                .map((item) => <Product item={item} key={item._id} />)}
+        </Styled.ProductContainer>
+      )}
     </Styled.Container>
   );
 };

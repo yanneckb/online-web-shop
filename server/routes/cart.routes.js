@@ -13,6 +13,7 @@ router.post('/', verifyToken, async (req, res) => {
     const savedCart = await newCart.save();
     res.status(200).json(savedCart);
   } catch (err) {
+    console.log('CREATE CART ERROR: ', err);
     res.status(500).json(err);
   }
 });

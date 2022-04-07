@@ -28,14 +28,15 @@ const Register = () => {
       [name]: value,
     });
   };
-  const handleClick = (e) => {
+  const handleClick = async (e) => {
     e.preventDefault();
     const { firstName, lastName, username, email, password, confirmPassword } =
       user;
     if (password === confirmPassword) {
       setCheckPw(false);
       if ((firstName, lastName, username, email, password)) {
-        register(dispatch, user);
+        await register(dispatch, user);
+        window.location.reload();
       } else {
         return alert('Bitte überprüfe deine Eingaben!');
       }

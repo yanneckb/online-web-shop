@@ -26,42 +26,24 @@ const App = () => {
 
   // CLEARS LOGIN/REGISTER ERRORS AND LOGOUT IF TOKEN EXPIRED
   useEffect(() => {
-    async () => {
+    const LogoutAndReload = async () => {
       dispatch(clearErrors());
       if (user) {
         const jwtDate = jwt.decode(user.accessToken).exp * 1000;
         const currentDate = Date.now();
         if (currentDate > jwtDate) {
-          //LogoutAndReload();
           await logout(dispatch);
           window.location.reload();
         }
       }
     };
+    LogoutAndReload();
   }, []);
 
   // REFRESH PAGE ON ROUTE CHANGE
   const location = useLocation();
-  const prevLocation = usePrevious(location);
 
-  const usePrevious = (value) => {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  };
-  const useLocationChange = (action) => {
-    useEffect(() => {
-      action(location, prevLocation);
-    }, [location]);
-  };
-
-  useEffect(() => {
-    if (location !== prevLocation) {
-      window.location.reload();
-    }
-  }, [location]);
+  //window.location.reload();
 
   return (
     <>
@@ -71,32 +53,28 @@ const App = () => {
         <div style={{ backgroundColor: '#F6F6F6' }}>
           <Routes>
             <Route exact path='/' element={<Home />} />
-            <Route exact path='/product/:id' element={<Product />} />
-            <Route exact path='/products/:category' element={<ProductList />} />
+            <Route path='/product/:id' element={<Product />} />
+            <Route path='/products/:category' element={<ProductList />} />
             <Route
-              exact
               path='/register'
               element={user ? <Navigate to='/' /> : <Register />}
             />
             <Route
-              exact
               path='/login'
               element={user ? <Navigate to='/' /> : <Login />}
             />
             <Route
-              exact
               path='/cart'
               element={!user ? <Navigate to='/login' /> : <Cart />}
             />
             <Route
-              exact
               path='/account'
               element={!user ? <Navigate to='/login' /> : <Account />}
             >
               <Route path='/account/orders' element={<Orders />} />
             </Route>
-            <Route exact path='/pay' element={<Pay />} />
-            <Route exact path='/success' element={<Success />} />
+            <Route path='/pay' element={<Pay />} />
+            <Route path='/success' element={<Success />} />
             // NO MATCH ROUTE! OTHER ROUTES ABOVE
             <Route
               path='*'

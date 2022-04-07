@@ -125,8 +125,7 @@ export const TopInfo = styled.div`
 `;
 
 export const BottomInfo = styled.div`
-  display: flex;
-  justify-content: center;
+  padding: 2rem 0;
 `;
 
 export const ShoppingInfo = styled.div``;
