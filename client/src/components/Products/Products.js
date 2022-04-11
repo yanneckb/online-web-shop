@@ -16,7 +16,7 @@ const Products = ({ category, filters, sort }) => {
       try {
         const res = await axios.get(
           category
-            ? `http://localhost:8080/api/products?=${category}`
+            ? `http://localhost:8080/api/products?category=${category}`
             : 'http://localhost:8080/api/products'
         );
         setProducts(res.data);
@@ -40,6 +40,7 @@ const Products = ({ category, filters, sort }) => {
   }, [products, category, filters]);
 
   useEffect(() => {
+    // NACH DATUM FUNZT NICHT
     if (sort === 'newest') {
       setfilteredProducts((prev) =>
         [...prev].sort((a, b) => a.createdAt - b.createdAt)
@@ -53,7 +54,7 @@ const Products = ({ category, filters, sort }) => {
         [...prev].sort((a, b) => b.price - a.price)
       );
     }
-  }, []);
+  }, [sort]);
 
   return (
     <Styled.Container>
