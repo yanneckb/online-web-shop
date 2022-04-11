@@ -20,6 +20,7 @@ import Account from './pages/Account';
 import Orders from './pages/Account/Orders';
 import User from './pages/Account/User';
 import jwt from 'jsonwebtoken';
+import HomeAccount from './pages/Account/HomeAccount';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -74,6 +75,7 @@ const App = () => {
             >
               <Route path='/account/orders' element={<Orders />} />
               <Route path='/account/user' element={<User />} />
+              <Route path='/account/' element={<HomeAccount />} />
             </Route>
             <Route path='/pay' element={<Pay />} />
             <Route path='/success' element={<Success />} />

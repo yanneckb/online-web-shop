@@ -3,7 +3,7 @@ const { verifyTokenAndAdmin } = require('../middleware');
 const Product = require('../models/product');
 
 // CREATE
-router.post('/', verifyTokenAndAdmin, async (req, res) => {
+router.post('/', async (req, res) => {
   const newProduct = new Product(req.body);
   try {
     const savedProduct = await newProduct.save();
@@ -52,8 +52,6 @@ router.get('/find/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   const queryNew = req.query.new;
   const queryCat = req.query.category;
-  console.log('QUERY NEW: ', queryNew);
-  console.log('QUERY CAT: ', queryCat);
   try {
     let products;
 
@@ -61,7 +59,6 @@ router.get('/', async (req, res) => {
       products = await Product.find().sort({ createdAt: -1 }).limit(1);
     } else if (queryCat) {
       products = await Product.find({ categories: { $in: [queryCat] } });
-      console.log(products);
     } else {
       products = await Product.find();
     }

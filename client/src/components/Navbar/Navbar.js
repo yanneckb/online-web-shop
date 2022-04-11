@@ -1,6 +1,6 @@
 import React from 'react';
-import { Badge } from '@material-ui/core';
-import { Search, ShoppingCartOutlined } from '@material-ui/icons';
+import { ShoppingCartOutlined } from '@material-ui/icons';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import * as Styled from './styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/apiCalls.redux';
@@ -43,11 +43,16 @@ const Navbar = () => {
           </Styled.StyledLink>
         </Styled.Center>
         <Styled.Right>
+          {user && (
+            <Styled.StyledLink to='/account'>
+              <Styled.MenuItem>
+                <AccountCircleOutlinedIcon />
+              </Styled.MenuItem>
+            </Styled.StyledLink>
+          )}
           <Styled.StyledLink to='/cart'>
             <Styled.MenuItem>
-              <Badge badgeContent={qty} color='primary'>
-                <ShoppingCartOutlined />
-              </Badge>
+              <ShoppingCartOutlined />
             </Styled.MenuItem>
           </Styled.StyledLink>
         </Styled.Right>

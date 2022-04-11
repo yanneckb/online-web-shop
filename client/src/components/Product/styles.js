@@ -26,6 +26,7 @@ export const Container = styled.div`
   position: relative;
   cursor: pointer;
   border-radius: 1rem;
+  min-width: 300px;
   ${hoverShadow}
 `;
 
