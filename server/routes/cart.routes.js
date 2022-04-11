@@ -139,6 +139,44 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
     const { id } = req.params;
     const cart = await Cart.findOne({ userId: id });
     const cartId = await cart._id.toString();
+    if (type === 'acs' && cart.products[index].qty < 99) {
+      cart.products[index].qty = product.qty + 1;
+      const updatedQty = cart.products.length;
+      const updatedTotal = cart.total + product.price;
+      const updatedData = {
+        userId: cart.userId,
+        products: cart.products,
+        qty: updatedQty,
+        total: updatedTotal,
+      };
+      const updatedCart = await Cart.findByIdAndUpdate(
+        cartId,
+        { ...updatedData },
+        { new: true }
+      );
+      await updatedCart.save();
+      console.log(updatedCart);
+      res.status(200).send({ updatedCart, index });
+    }
+    if (type === 'decs' && cart.products[index].qty > 1) {
+      cart.products[index].qty = product.qty - 1;
+      const updatedQty = cart.products.length;
+      const updatedTotal = cart.total - product.price;
+      const updatedData = {
+        userId: cart.userId,
+        products: cart.products,
+        qty: updatedQty,
+        total: updatedTotal,
+      };
+      const updatedCart = await Cart.findByIdAndUpdate(
+        cartId,
+        { ...updatedData },
+        { new: true }
+      );
+      await updatedCart.save();
+      console.log(updatedCart);
+      res.status(200).send({ updatedCart, index });
+    }
     if (type === 'remove') {
       await cart.products.splice(index, 1);
       const updatedQty = cart.products.length;
@@ -155,7 +193,6 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
         { new: true }
       );
       await updatedCart.save();
-      console.log(updatedCart);
       res.status(200).send(updatedCart);
     }
   } catch (err) {
@@ -165,10 +202,23 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
 });
 
 // DELETE
-router.delete('/:id', verifyTokenAndAuth, async (req, res) => {
+router.put('/clear/:id', verifyTokenAndAuth, async (req, res) => {
   try {
-    await Cart.findByIdAndDelete(req.params.id);
-    res.status(200).json('Warenkorb wurde geleert!');
+    const cart = await Cart.findOne({ userId: req.params.id });
+    const cartId = await cart._id.toString();
+    const updatedData = {
+      userId: cart.userId,
+      products: [],
+      qty: 0,
+      total: 0,
+    };
+    const updatedCart = await Cart.findByIdAndUpdate(
+      cartId,
+      { ...updatedData },
+      { new: true }
+    );
+    await updatedCart.save();
+    res.status(200).send(updatedCart);
   } catch (err) {
     console.log('DELETE ERROR: ', err);
     res.status(500).json(err);

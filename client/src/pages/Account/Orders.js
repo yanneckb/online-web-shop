@@ -4,14 +4,24 @@ import * as Styled from './styles';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { userReq } from '../../helpers/requestMethods';
+import Loader from '../../components/Loader';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const Orders = () => {
   const [order, setOrder] = useState([]);
-  const user = useSelector((state) => state.user.currentUser);
+  const [orderNr, setOrderNr] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const user =
+    useSelector((state) => state.user.currentUser.savedUser) ||
+    useSelector((state) => state.user.currentUser.user);
 
   useEffect(async () => {
     const orders = await userReq.get(`orders/find/${user._id}`);
     setOrder(orders.data);
+    console.log(order);
+    console.log(orderNr);
+    setIsLoading(false);
   }, []);
 
   const handleClick = (e) => {
@@ -19,57 +29,78 @@ const Orders = () => {
     login(dispatch, { username, password });
   };
 
+  const handleChange = (action) => {
+    if (action === 'next' && orderNr < order.length - 1) {
+      setOrderNr(orderNr + 1);
+    }
+    if (action === 'prev' && orderNr > 0) {
+      setOrderNr(orderNr - 1);
+    } else return;
+  };
+
   return (
     <Styled.OrderContainer>
-      {order.length === 0 ? (
-        <p>Du hast noch keine Bestellungen</p>
+      {isLoading ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '20vh',
+          }}
+        >
+          <Loader />
+        </div>
+      ) : order.length === 0 ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100%',
+          }}
+        >
+          <Styled.Title>Du hast noch keine Bestellungen... ☹️</Styled.Title>
+        </div>
       ) : (
-        <div>
+        <Styled.OrderBox>
           <Styled.Caption>Meine Bestellungen</Styled.Caption>
 
           <Styled.Orders>
-            <p>
+            <Styled.OrderText>
               <b>Adresse:</b> {order[orderNr].address}
-            </p>
+            </Styled.OrderText>
 
-            <p>
+            <Styled.OrderText>
               <b>Bestellt am: </b>
-              {`${new Date(order[orderNr].createdAt).getDate()} - ${
+              {`${new Date(order[orderNr].createdAt).getDate()}. ${
                 new Date(order[orderNr].createdAt).getMonth() + 1
-              } - ${new Date(order[orderNr].createdAt).getFullYear()}`}
-            </p>
-            <p>
+              }. ${new Date(order[orderNr].createdAt).getFullYear()}`}
+            </Styled.OrderText>
+            <Styled.OrderText>
               <b>Status:</b> {order[orderNr].status}
-            </p>
-            <p>
+            </Styled.OrderText>
+            <Styled.OrderText>
               <b>Anzahl: </b>
               {order[orderNr].products.length} Produkt(e)
-            </p>
+            </Styled.OrderText>
+            <Styled.OrderText>
+              <b>Summe: </b>
+              {order[orderNr].amount} €
+            </Styled.OrderText>
           </Styled.Orders>
-          <button onClick={() => handleChange('next')}>NEXT ORDER</button>
-          <button onClick={() => handleChange('prev')}>previous ORDER</button>
-          {/* {order.map((o) => (
-            <Styled.Orders>
-              <p>
-                <b>Adresse:</b> {o.address}
-              </p>
-
-              <p>
-                <b>Bestellt am: </b>
-                {`${new Date(o.createdAt).getDate()} - ${
-                  new Date(o.createdAt).getMonth() + 1
-                } - ${new Date(o.createdAt).getFullYear()}`}
-              </p>
-              <p>
-                <b>Status:</b> {o.status}
-              </p>
-              <p>
-                <b>Anzahl: </b>
-                {o.products.length} Produkt(e)
-              </p>
-            </Styled.Orders>
-          ))} */}
-        </div>
+          <Styled.OrderNav>
+            <Styled.OrderBtn onClick={() => handleChange('prev')}>
+              <ArrowBackIosNewIcon />
+            </Styled.OrderBtn>
+            <p>
+              Bestellung {orderNr + 1} von {order.length}
+            </p>
+            <Styled.OrderBtn onClick={() => handleChange('next')}>
+              <ArrowForwardIosIcon />
+            </Styled.OrderBtn>
+          </Styled.OrderNav>
+        </Styled.OrderBox>
       )}
     </Styled.OrderContainer>
   );

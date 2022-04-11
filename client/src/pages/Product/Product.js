@@ -22,6 +22,7 @@ const Product = () => {
   const dispatch = useDispatch();
   const [valid, setValid] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
     const getProduct = async () => {
@@ -51,6 +52,7 @@ const Product = () => {
         setValid(false);
         alert('Bitte Wähle eine Größe und eine Farbe!');
       } else {
+        setIsDisabled(true);
         setValid(true);
         console.log(cart);
         const index = cart.products.findIndex((item) => {
@@ -63,7 +65,6 @@ const Product = () => {
         ) {
           dispatch(updateCart({ index, product, type: 'acs' }));
           navigate('/cart');
-          window.location.reload();
         } else {
           dispatch(
             addToCart({
@@ -153,7 +154,11 @@ const Product = () => {
             <Styled.AddContainer>
               <Styled.BuySection>
                 <Styled.Price>{product.price}€</Styled.Price>
-                <Styled.Button onClick={handleClick}>
+                <Styled.Button
+                  onClick={handleClick}
+                  disabled={isDisabled}
+                  style={{ cursor: isDisabled ? 'disabled' : '' }}
+                >
                   In den Warenkorb
                 </Styled.Button>
               </Styled.BuySection>

@@ -8,9 +8,15 @@ import {
   registerStart,
   registerSuccess,
   registerFailure,
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from './user.redux';
 import { clearCart } from './cart.redux';
-import { publicReq } from '../helpers/requestMethods';
+import { publicReq, userReq } from '../helpers/requestMethods';
 
 // // GETS DATA FROM REGISTER FORM AND POST TO AUTH BACKEND
 export const register = async (dispatch, user) => {
@@ -31,6 +37,29 @@ export const login = async (dispatch, user) => {
     dispatch(loginSuccess(res.data));
   } catch (err) {
     dispatch(loginFailure());
+  }
+};
+
+export const updateUserData = async (dispatch, updatedUser) => {
+  dispatch(updateUserStart());
+  try {
+    const res = await userReq.put(`/users/${updatedUser._id}`, updatedUser);
+    console.log('RES: ', res);
+    dispatch(updateUserSuccess(res.data));
+  } catch (err) {
+    dispatch(updateUserFailure());
+  }
+};
+
+export const deleteUser = async (dispatch, userId) => {
+  dispatch(deleteUserStart());
+  try {
+    console.log('userId: ', userId);
+    const res = await userReq.delete(`/users/${userId._id}`);
+    console.log('RES: ', res);
+    dispatch(deleteUserSuccess());
+  } catch (err) {
+    dispatch(deleteUserFailure());
   }
 };
 

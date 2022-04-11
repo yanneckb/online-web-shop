@@ -13,7 +13,7 @@ const Login = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     await login(dispatch, { username, password });
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (

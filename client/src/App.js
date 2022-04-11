@@ -18,6 +18,7 @@ import Pay from './components/PaymentTest/Pay';
 import ScrollToTop from './helpers/scrollToTop';
 import Account from './pages/Account';
 import Orders from './pages/Account/Orders';
+import User from './pages/Account/User';
 import jwt from 'jsonwebtoken';
 
 const App = () => {
@@ -72,6 +73,7 @@ const App = () => {
               element={!user ? <Navigate to='/login' /> : <Account />}
             >
               <Route path='/account/orders' element={<Orders />} />
+              <Route path='/account/user' element={<User />} />
             </Route>
             <Route path='/pay' element={<Pay />} />
             <Route path='/success' element={<Success />} />

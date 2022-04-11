@@ -40,19 +40,19 @@ export const categories = [
     id: 1,
     img: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
     title: 'Shirts',
-    category: 'Shirts',
+    category: 'Tshirt',
   },
   {
     id: 2,
     img: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
     title: 'Longwear',
-    category: 'Longwear',
+    category: 'Hose',
   },
   {
     id: 3,
     img: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-    title: 'Spring Collection',
-    category: 'Neue Produkte',
+    title: 'Summer Collection',
+    category: 'Sommer',
   },
 ];
 

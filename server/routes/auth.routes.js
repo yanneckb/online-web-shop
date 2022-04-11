@@ -63,6 +63,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const user = await User.findOne({ username });
+
     if (!user) {
       return res.status(401).json('Nutzername oder Passwort stimmen nicht!');
     }
@@ -72,8 +73,9 @@ router.post('/login', async (req, res) => {
       process.env.PASSWORD_SECRET
     );
     const decryptedPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-    decryptedPassword !== req.body.password &&
-      res.status(401).json('Nutzername oder Passwort stimmen nicht!');
+    if (decryptedPassword !== password) {
+      return res.status(401).json('Nutzername oder Passwort stimmen nicht!');
+    }
 
     const accessToken = jwt.sign(
       {
@@ -83,7 +85,6 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '5h' }
     );
-
     res.status(200).json({ user, accessToken });
   } catch (err) {
     res.status(500).json(err);

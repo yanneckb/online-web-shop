@@ -4,16 +4,16 @@ import * as Styled from './styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearCart, updateCart, getCart } from '../../redux/cart.redux';
 import { useNavigate } from 'react-router-dom';
-import { publicReq, userReq } from '../../helpers/requestMethods';
+import { userReq } from '../../helpers/requestMethods';
 import Loader from '../../components/Loader';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 
-const KEY = process.env.REACT_APP_STRIPE;
 const Cart = () => {
   const cart = useSelector((state) => state.cart.cartData);
   const userId = useSelector((state) => state.user.currentUser.user._id);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [{ isPending }] = usePayPalScriptReducer();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -26,6 +26,12 @@ const Cart = () => {
       setProducts([]);
       const productArray = [];
       for (let i = 0; i < cart.products.length; i++) {
+        console.log('IN CART: ', cart);
+        console.log('IN CART: ', cart.products[i]);
+        // console.log(
+        //   'IN CART: ',
+        //   cart.products[i].products[i].productId || cart.products[i].productId
+        // );
         const res = await userReq.get(
           `/products/find/${cart.products[i].productId}`
         );
@@ -43,11 +49,11 @@ const Cart = () => {
   }, []);
 
   const handleChange = (target, type) => {
+    setIsDisabled(true);
     const index = cart.products.findIndex((item) => {
       return item._id === target._id;
     });
     dispatch(updateCart({ userId, index, product: target, type }));
-    window.location.reload();
   };
 
   return (
@@ -66,7 +72,6 @@ const Cart = () => {
       ) : (
         <Styled.Wrapper>
           <Styled.Title>Dein Warenkorb:</Styled.Title>
-          <button onClick={() => console.log(products)}>CLICK</button>
           <Styled.Top>
             <Styled.TopButton onClick={() => navigate('/')}>
               Nochmal umsehen
@@ -114,16 +119,22 @@ const Cart = () => {
                         <Styled.Amount>
                           <Styled.AmountButton
                             onClick={() => handleChange(product, 'acs')}
+                            disabled={isDisabled}
+                            style={{ cursor: isDisabled ? 'disabled' : '' }}
                           >
                             <Add />
                           </Styled.AmountButton>
                           <Styled.AmountButton
                             onClick={() => handleChange(product, 'decs')}
+                            disabled={isDisabled}
+                            style={{ cursor: isDisabled ? 'disabled' : '' }}
                           >
                             <Remove />
                           </Styled.AmountButton>
                           <Styled.AmountButton
                             onClick={() => handleChange(product, 'remove')}
+                            disabled={isDisabled}
+                            style={{ cursor: isDisabled ? 'disabled' : '' }}
                           >
                             <Delete />
                           </Styled.AmountButton>
@@ -134,7 +145,7 @@ const Cart = () => {
                   ))}
                   <Styled.TopButton
                     style={{ marginTop: '1rem', marginBottom: '2rem' }}
-                    onClick={() => dispatch(clearCart())}
+                    onClick={() => dispatch(clearCart(userId))}
                   >
                     Warenkorb leeren
                   </Styled.TopButton>

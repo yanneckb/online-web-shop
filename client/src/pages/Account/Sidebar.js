@@ -9,7 +9,12 @@ import { format } from 'timeago.js';
 const Sidebar = () => {
   return (
     <Styled.Sidebar>
-      <Styled.StyledLink to='/account/orders'>Bestellung</Styled.StyledLink>
+      <Styled.Title>Übersicht</Styled.Title>
+      <Styled.Sidelist>
+        <Styled.SideLinks to='/account/orders'>Bestellung</Styled.SideLinks>
+        <Styled.SideLinks to='/account/user'>Konto</Styled.SideLinks>
+        <Styled.SideLinks to='/account/newsletter'>Newsletter</Styled.SideLinks>
+      </Styled.Sidelist>
     </Styled.Sidebar>
   );
 };

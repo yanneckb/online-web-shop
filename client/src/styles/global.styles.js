@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components';
 import { keyframes } from 'styled-components';
 
 // GRADIENT COLORS
-const colorOne = '#4b749f';
-const colorTwo = '#243748';
+export const colorOne = '#4b749f';
+export const colorTwo = '#243748';
 
 //purple peach
 // const colorOne = '#ef745c';
@@ -70,6 +70,18 @@ export const darkGradientBtn = css`
     background-position: right center; /* change the direction of the change here */
     color: #fff;
     text-decoration: none;
+  }
+`;
+
+// RED GRADIENT BUTTON
+export const redGradientBtn = css`
+  color: #6a1a21;
+  background-color: rgb(248, 215, 218);
+  background-size: 200% auto;
+  border: 1px solid #f5c2c7;
+  &:hover {
+    background-color: #f5c2c7;
+    border: 1px solid #6a1a21;
   }
 `;
 
