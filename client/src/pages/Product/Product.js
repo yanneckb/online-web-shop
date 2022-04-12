@@ -21,12 +21,12 @@ const Product = () => {
   const [size, setSize] = useState('');
   const dispatch = useDispatch();
   const [valid, setValid] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
 
+  // GET PRODUCT
   useEffect(() => {
     const getProduct = async () => {
-      setIsLoading(true);
       try {
         const res = await publicReq.get(`/products/find/${id}`);
         setProduct(res.data);
@@ -36,6 +36,7 @@ const Product = () => {
     getProduct();
   }, [id]);
 
+  // HANDLE QUANTITY FOR ADD TO CART
   const handleQty = (type) => {
     if (type === 'dec') {
       qty > 1 && setQty(qty - 1);
@@ -45,8 +46,8 @@ const Product = () => {
     }
   };
 
+  // ADD ITEM TO CART
   const handleClick = () => {
-    // ADD ITEM TO CART
     if (user) {
       if (color === '' && size === '') {
         setValid(false);
@@ -54,7 +55,6 @@ const Product = () => {
       } else {
         setIsDisabled(true);
         setValid(true);
-        console.log(cart);
         const index = cart.products.findIndex((item) => {
           return item._id === product._id;
         });

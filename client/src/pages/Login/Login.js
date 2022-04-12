@@ -8,12 +8,12 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const { isFetching, error, currentUser } = useSelector((state) => state.user);
+  const { isFetching, error } = useSelector((state) => state.user);
 
+  // HANDLE LOGIN
   const handleClick = async (e) => {
     e.preventDefault();
     await login(dispatch, { username, password });
-    // window.location.reload();
   };
 
   return (

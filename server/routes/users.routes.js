@@ -1,14 +1,10 @@
 const router = require('express').Router();
 const CryptoJS = require('crypto-js');
 const User = require('../models/user');
-const {
-  verifyToken,
-  verifyTokenAndAuth,
-  verifyTokenAndAdmin,
-} = require('../middleware');
+const { verifyTokenAndAuth, verifyTokenAndAdmin } = require('../middleware');
 
 // UPDATE
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyTokenAndAuth, async (req, res) => {
   if (req.user.id === req.params.id || req.user.isAdmin) {
     if (req.body.password) {
       req.body.password = CryptoJS.AES.encrypt(

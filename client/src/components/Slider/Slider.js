@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as Styled from './styles';
 import { sliderItems } from '../../data';
 
-// Shows the current slide and navigate to other slides
+// SHOWS THE CURRENT SLIDE AND NAVIGATE TO OTHER SLIDE
 const Indicator = ({ currentSlide, amountSlides, nextSlide }) => {
   return (
     <Styled.IndicatorWrapper>
@@ -19,11 +19,11 @@ const Indicator = ({ currentSlide, amountSlides, nextSlide }) => {
   );
 };
 
-// Carousel component
+// CAROUSEL COMPONENT
 export default function Carousel({ autoPlay = true, autoPlayTime = 5000 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // next slide function
+  // NEXT SLIDE FUNCTION
   const nextSlide = useCallback(
     (slideIndex = currentSlide + 1) => {
       const newSlideIndex = slideIndex >= sliderItems.length ? 0 : slideIndex;
@@ -32,7 +32,7 @@ export default function Carousel({ autoPlay = true, autoPlayTime = 5000 }) {
     [currentSlide]
   );
 
-  // starts auto play on render
+  // START AUTOPLAY ON RENDER
   useEffect(() => {
     const timer = setTimeout(() => {
       nextSlide();

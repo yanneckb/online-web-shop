@@ -18,7 +18,7 @@ import {
 import { clearCart } from './cart.redux';
 import { publicReq, userReq } from '../helpers/requestMethods';
 
-// // GETS DATA FROM REGISTER FORM AND POST TO AUTH BACKEND
+// GET DATA FROM REGISTER FORM AND POST TO AUTH BACKEND
 export const register = async (dispatch, user) => {
   dispatch(registerStart());
   try {
@@ -29,7 +29,7 @@ export const register = async (dispatch, user) => {
   }
 };
 
-// GETS DATA FROM LOGIN FORM AND POST TO AUTH BACKEND
+// GET DATA FROM LOGIN FORM AND POST TO AUTH BACKEND
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
   try {
@@ -40,29 +40,29 @@ export const login = async (dispatch, user) => {
   }
 };
 
+// UPDATE USER DATA
 export const updateUserData = async (dispatch, updatedUser) => {
   dispatch(updateUserStart());
   try {
     const res = await userReq.put(`/users/${updatedUser._id}`, updatedUser);
-    console.log('RES: ', res);
     dispatch(updateUserSuccess(res.data));
   } catch (err) {
     dispatch(updateUserFailure());
   }
 };
 
+// DELETE USER
 export const deleteUser = async (dispatch, userId) => {
   dispatch(deleteUserStart());
   try {
-    console.log('userId: ', userId);
     const res = await userReq.delete(`/users/${userId._id}`);
-    console.log('RES: ', res);
-    dispatch(deleteUserSuccess());
+    dispatch(deleteUserSuccess(res.data));
   } catch (err) {
     dispatch(deleteUserFailure());
   }
 };
 
+// LOGOUT USER
 export const logout = async (dispatch) => {
   dispatch(logoutStart());
   try {

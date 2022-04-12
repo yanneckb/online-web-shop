@@ -1,10 +1,7 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import * as Styled from './styles';
 
 const Success = () => {
-  const location = useLocation();
-  // console.log(location);
   return (
     <Styled.Container>
       <Styled.Title>Yay, deine Bestellung ist eingegangen!</Styled.Title>

@@ -1,4 +1,4 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 // LOGIN REDUX
 const userSlice = createSlice({
@@ -19,7 +19,9 @@ const userSlice = createSlice({
     },
     registerSuccess: (state, action) => {
       state.isFetching = false;
-      state.currentUser = action.payload;
+      state.currentUser = null;
+      //state.currentUser = action.payload;
+      //window.location.reload();
     },
     registerFailure: (state) => {
       state.isFetching = false;
@@ -32,6 +34,7 @@ const userSlice = createSlice({
     loginSuccess: (state, action) => {
       state.isFetching = false;
       state.currentUser = action.payload;
+      window.location.reload();
     },
     loginFailure: (state) => {
       state.isFetching = false;
@@ -44,6 +47,7 @@ const userSlice = createSlice({
     logoutSuccess: (state) => {
       state.isFetching = false;
       state.currentUser = null;
+      window.location.reload();
     },
     logoutFailure: (state) => {
       state.isFetching = false;
@@ -54,10 +58,9 @@ const userSlice = createSlice({
       state.isFetching = true;
     },
     updateUserSuccess: (state, action) => {
-      // console.log(current(state.currentUser.user));
-      // console.log(action.payload);
       state.isFetching = false;
       state.currentUser.user = action.payload;
+      window.location.reload();
     },
     updateUserFailure: (state) => {
       state.isFetching = false;

@@ -43,7 +43,7 @@ router.delete('/:id', verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-// GET USER Orders
+// GET USER ORDERS
 router.get('/find/:userId', verifyTokenAndAuth, async (req, res) => {
   console.log('ORDERS', req.params);
   try {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as Styled from './styles';
-import { categories, popularProducts } from '../../data';
 import Product from '../Product';
 import Loader from '../Loader';
 
@@ -10,6 +9,7 @@ const Products = ({ category, filters, sort }) => {
   const [filteredProducts, setfilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // GET CATEGORY PRODUCTS OR ALL PRODUCTS
   useEffect(() => {
     const getProducts = async () => {
       setIsLoading(true);
@@ -21,13 +21,12 @@ const Products = ({ category, filters, sort }) => {
         );
         setProducts(res.data);
         setIsLoading(false);
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     };
     getProducts();
   }, [category]);
 
+  // FILTER PRODUCTS
   useEffect(() => {
     category &&
       setfilteredProducts(
@@ -39,6 +38,7 @@ const Products = ({ category, filters, sort }) => {
       );
   }, [products, category, filters]);
 
+  // SORT PRODUCTS
   useEffect(() => {
     // NACH DATUM FUNZT NICHT
     if (sort === 'newest') {

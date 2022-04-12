@@ -139,8 +139,6 @@ export const PaymentContainer = styled.div`
   align-items: center;
   width: 100%;
 `;
-// border-bottom-left-radius: 0.3rem;
-// border-bottom-right-radius: 0.3rem;
 
 export const PaymentMethods = styled.div`
   display: flex;

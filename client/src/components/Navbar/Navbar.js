@@ -6,13 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/apiCalls.redux';
 
 const Navbar = () => {
-  const qty = useSelector((state) => state.cart.qty);
   const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
   const handleClick = async (e) => {
+    e.preventDefault();
     await logout(dispatch);
-    window.location.reload();
   };
 
   return (

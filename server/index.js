@@ -9,7 +9,6 @@ const authRoute = require('./routes/auth.routes');
 const productRoute = require('./routes/product.routes');
 const cartRoute = require('./routes/cart.routes');
 const orderRoute = require('./routes/order.routes');
-const stripeRoute = require('./routes/stripe.routes');
 
 const app = express();
 
@@ -28,7 +27,6 @@ app.use('/api/auth', authRoute);
 app.use('/api/products', productRoute);
 app.use('/api/carts', cartRoute);
 app.use('/api/orders', orderRoute);
-app.use('/api/checkout', stripeRoute);
 
 app.get('/', (req, res) => {
   res.send('HELLO FROM BACKEND');

@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useRef, usePrevious } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearErrors } from './redux/user.redux';
 import { logout } from './redux/apiCalls.redux';
@@ -14,7 +14,6 @@ import Announcement from './components/Announcement';
 import Navbar from './components/Navbar';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
-import Pay from './components/PaymentTest/Pay';
 import ScrollToTop from './helpers/scrollToTop';
 import Account from './pages/Account';
 import Orders from './pages/Account/Orders';
@@ -35,17 +34,11 @@ const App = () => {
         const currentDate = Date.now();
         if (currentDate > jwtDate) {
           await logout(dispatch);
-          window.location.reload();
         }
       }
     };
     LogoutAndReload();
   }, []);
-
-  // REFRESH PAGE ON ROUTE CHANGE
-  const location = useLocation();
-
-  //window.location.reload();
 
   return (
     <>
@@ -77,9 +70,8 @@ const App = () => {
               <Route path='/account/user' element={<User />} />
               <Route path='/account/' element={<HomeAccount />} />
             </Route>
-            <Route path='/pay' element={<Pay />} />
             <Route path='/success' element={<Success />} />
-            // NO MATCH ROUTE! OTHER ROUTES ABOVE
+            // NO MATCH ROUTE!
             <Route
               path='*'
               element={

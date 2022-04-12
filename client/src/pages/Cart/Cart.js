@@ -12,7 +12,7 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart.cartData);
   const userId = useSelector((state) => state.user.currentUser.user._id);
   const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
   const [{ isPending }] = usePayPalScriptReducer();
   const navigate = useNavigate();
@@ -20,34 +20,32 @@ const Cart = () => {
 
   // ON PAGE LOAD GET CART FROM DB AND PUSH INTO PRODUCTS ARRAY
   useEffect(() => {
-    dispatch(getCart(userId));
-    setIsLoading(true);
-    const pushProducts = async () => {
-      setProducts([]);
-      const productArray = [];
-      for (let i = 0; i < cart.products.length; i++) {
-        console.log('IN CART: ', cart);
-        console.log('IN CART: ', cart.products[i]);
-        // console.log(
-        //   'IN CART: ',
-        //   cart.products[i].products[i].productId || cart.products[i].productId
-        // );
-        const res = await userReq.get(
-          `/products/find/${cart.products[i].productId}`
-        );
-        productArray.push({
-          ...cart.products[i],
-          img: res.data.img,
-          price: res.data.price,
-          title: res.data.title,
-        });
-      }
-      setProducts([...productArray]);
+    if (cart.products.length > 0) {
+      dispatch(getCart(userId));
+      const pushProducts = async () => {
+        setProducts([]);
+        const productArray = [];
+        for (let i = 0; i < cart.products.length; i++) {
+          const res = await userReq.get(
+            `/products/find/${cart.products[i].productId}`
+          );
+          productArray.push({
+            ...cart.products[i],
+            img: res.data.img,
+            price: res.data.price,
+            title: res.data.title,
+          });
+        }
+        setProducts([...productArray]);
+        setIsLoading(false);
+      };
+      pushProducts();
+    } else {
       setIsLoading(false);
-    };
-    pushProducts();
+    }
   }, []);
 
+  // HANDLES QTY CHANGE OR PRODUCT REMOVE
   const handleChange = (target, type) => {
     setIsDisabled(true);
     const index = cart.products.findIndex((item) => {
@@ -76,10 +74,6 @@ const Cart = () => {
             <Styled.TopButton onClick={() => navigate('/')}>
               Nochmal umsehen
             </Styled.TopButton>
-            {/* <Styled.TopTexts>
-            <Styled.TopText>Shopping Bag(2)</Styled.TopText>
-            <Styled.TopText>Your Wishlist (0)</Styled.TopText>
-          </Styled.TopTexts> */}
           </Styled.Top>
           <Styled.Bottom>
             <Styled.Items>

@@ -2,11 +2,6 @@ const router = require('express').Router();
 const User = require('../models/user');
 const CryptoJS = require('crypto-js');
 const jwt = require('jsonwebtoken');
-const {
-  verifyToken,
-  verifyTokenAndAuth,
-  verifyTokenAndAdmin,
-} = require('../middleware');
 
 //REGISTER
 router.post('/register', async (req, res) => {
@@ -46,8 +41,8 @@ router.post('/register', async (req, res) => {
     { expiresIn: '1h' }
   );
   try {
-    const savedUser = await newUser.save();
-    res.status(201).json({ savedUser, accessToken });
+    const user = await newUser.save();
+    res.status(201).json({ user, accessToken });
   } catch (err) {
     res.status(500).json(err);
   }

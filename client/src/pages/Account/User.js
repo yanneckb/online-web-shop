@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { logout, updateUserData, deleteUser } from '../../redux/apiCalls.redux';
+import { updateUserData, deleteUser, logout } from '../../redux/apiCalls.redux';
 import * as Styled from './styles';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { userReq } from '../../helpers/requestMethods';
 import Loader from '../../components/Loader';
+
 const User = () => {
   const dispatch = useDispatch();
   const user =
@@ -20,16 +20,17 @@ const User = () => {
 
   useEffect(async () => {
     setIsLoading(false);
-  }, []);
+  }, [updateUser]);
 
+  // UPDATE USER DATA
   const handleClick = async () => {
     await updateUserData(dispatch, { updateUser, _id: user._id });
-    window.location.reload();
   };
+
+  // HANDLE USER DELETE
   const handleDelete = async () => {
     await deleteUser(dispatch, { _id: user._id });
-    //await logout(dispatch);
-    // window.location.reload();
+    await logout(dispatch);
   };
 
   return (
@@ -105,7 +106,7 @@ const User = () => {
                 // onChange={(e) =>
                 //   setUpdateUser({ ...updateUser, address: e.target.value })
                 // }
-                placeholder='insert adress plssss'
+                placeholder='not supported'
               />
             </Styled.UserText>
             <Styled.UserText></Styled.UserText>

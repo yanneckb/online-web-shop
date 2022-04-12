@@ -9,6 +9,7 @@ const ProductList = () => {
   const [filter, setFilter] = useState({});
   const [sort, setSort] = useState('newest');
 
+  // HANDLE PRODUCT FILTER
   const handleFilter = (e) => {
     const val = e.target.value;
     setFilter({

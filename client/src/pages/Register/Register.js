@@ -1,8 +1,6 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
-import { userReq } from '../../helpers/requestMethods';
+import { useNavigate } from 'react-router-dom';
 import { register } from '../../redux/apiCalls.redux';
 import * as Styled from './styles';
 
@@ -18,9 +16,9 @@ const Register = () => {
   const [checkPw, setCheckPw] = useState(false);
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
-  console.log(useSelector((state) => state));
-
+  // HANDLE TEXT INPUT
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({
@@ -28,6 +26,8 @@ const Register = () => {
       [name]: value,
     });
   };
+
+  // HANDLE USER REGISTER
   const handleClick = async (e) => {
     e.preventDefault();
     const { firstName, lastName, username, email, password, confirmPassword } =
@@ -36,7 +36,7 @@ const Register = () => {
       setCheckPw(false);
       if ((firstName, lastName, username, email, password)) {
         await register(dispatch, user);
-        window.location.reload();
+        navigate('/login');
       } else {
         return alert('Bitte überprüfe deine Eingaben!');
       }

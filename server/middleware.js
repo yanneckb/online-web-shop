@@ -22,7 +22,13 @@ module.exports.verifyToken = (req, res, next) => {
 // VERIFY USER TOKEN AND AUTHENTICATE
 module.exports.verifyTokenAndAuth = (req, res, next) => {
   this.verifyToken(req, res, () => {
-    if (req.user.id === req.params.id || req.user.isAdmin) {
+    console.log(req.user);
+    console.log(req.params);
+    if (
+      req.user.id === req.params.userId ||
+      req.user.id === req.params.id ||
+      req.user.isAdmin
+    ) {
       next();
     } else {
       res.status(403).json('Du hast keine Rechte dafür!');

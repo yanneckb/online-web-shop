@@ -1,5 +1,4 @@
-import { createSlice, current, createAsyncThunk } from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { userReq } from '../helpers/requestMethods';
 
 // GET CART FROM USER ID

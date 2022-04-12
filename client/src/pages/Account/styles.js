@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 import {
   colorGradientBtn,
   darkGradientBtn,
-  gradientBorder,
   hoverShadow,
   colorOne,
-  colorTwo,
   redGradientBtn,
 } from '../../styles/global.styles';
 

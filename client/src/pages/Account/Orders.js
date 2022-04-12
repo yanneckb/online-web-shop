@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { login } from '../../redux/apiCalls.redux';
 import * as Styled from './styles';
-import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { userReq } from '../../helpers/requestMethods';
 import Loader from '../../components/Loader';
@@ -16,19 +15,14 @@ const Orders = () => {
     useSelector((state) => state.user.currentUser.savedUser) ||
     useSelector((state) => state.user.currentUser.user);
 
+  // GET ALL USER ORDERS
   useEffect(async () => {
     const orders = await userReq.get(`orders/find/${user._id}`);
     setOrder(orders.data);
-    console.log(order);
-    console.log(orderNr);
     setIsLoading(false);
   }, []);
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    login(dispatch, { username, password });
-  };
-
+  // NAVIGATE THROUGH ORDERS
   const handleChange = (action) => {
     if (action === 'next' && orderNr < order.length - 1) {
       setOrderNr(orderNr + 1);

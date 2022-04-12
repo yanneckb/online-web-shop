@@ -1,10 +1,12 @@
-import styled, { css } from 'styled-components';
+import { css } from 'styled-components';
 import { keyframes } from 'styled-components';
 
 // GRADIENT COLORS
 export const colorOne = '#4b749f';
 export const colorTwo = '#243748';
 
+// OTHER COLOR THEMES:
+//
 //purple peach
 // const colorOne = '#ef745c';
 // const colorTwo = '#34073d';
