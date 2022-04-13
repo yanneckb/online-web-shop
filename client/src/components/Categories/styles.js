@@ -38,6 +38,7 @@ export const Title = styled.h1`
   color: white;
   margin-bottom: 20px;
   text-transform: uppercase;
+  text-align: center;
 `;
 
 export const Button = styled.button`

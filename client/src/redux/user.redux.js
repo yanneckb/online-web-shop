@@ -20,8 +20,6 @@ const userSlice = createSlice({
     registerSuccess: (state, action) => {
       state.isFetching = false;
       state.currentUser = null;
-      //state.currentUser = action.payload;
-      //window.location.reload();
     },
     registerFailure: (state) => {
       state.isFetching = false;
@@ -47,7 +45,6 @@ const userSlice = createSlice({
     logoutSuccess: (state) => {
       state.isFetching = false;
       state.currentUser = null;
-      window.location.reload();
     },
     logoutFailure: (state) => {
       state.isFetching = false;
@@ -73,6 +70,8 @@ const userSlice = createSlice({
     deleteUserSuccess: (state) => {
       state.isFetching = false;
       state.currentUser.user = null;
+      localStorage.clear();
+      window.location.reload();
     },
     deleteUserFailure: (state) => {
       state.isFetching = false;

@@ -15,7 +15,6 @@ import {
   deleteUserSuccess,
   deleteUserFailure,
 } from './user.redux';
-import { clearCart } from './cart.redux';
 import { publicReq, userReq } from '../helpers/requestMethods';
 
 // GET DATA FROM REGISTER FORM AND POST TO AUTH BACKEND
@@ -46,6 +45,8 @@ export const updateUserData = async (dispatch, updatedUser) => {
   try {
     const res = await userReq.put(`/users/${updatedUser._id}`, updatedUser);
     dispatch(updateUserSuccess(res.data));
+    console.log('DISPATCH', dispatch);
+    console.log('RES', res.data);
   } catch (err) {
     dispatch(updateUserFailure());
   }
@@ -67,7 +68,6 @@ export const logout = async (dispatch) => {
   dispatch(logoutStart());
   try {
     dispatch(logoutSuccess());
-    dispatch(clearCart());
   } catch (err) {
     dispatch(logoutFailure());
   }

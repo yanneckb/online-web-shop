@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { login } from '../../redux/apiCalls.redux';
 import * as Styled from './styles';
 import { useSelector } from 'react-redux';
 import { userReq } from '../../helpers/requestMethods';
@@ -15,13 +14,6 @@ const Orders = () => {
     useSelector((state) => state.user.currentUser.savedUser) ||
     useSelector((state) => state.user.currentUser.user);
 
-  // GET ALL USER ORDERS
-  useEffect(async () => {
-    const orders = await userReq.get(`orders/find/${user._id}`);
-    setOrder(orders.data);
-    setIsLoading(false);
-  }, []);
-
   // NAVIGATE THROUGH ORDERS
   const handleChange = (action) => {
     if (action === 'next' && orderNr < order.length - 1) {
@@ -31,6 +23,13 @@ const Orders = () => {
       setOrderNr(orderNr - 1);
     } else return;
   };
+
+  // GET ALL USER ORDERS
+  useEffect(async () => {
+    const orders = await userReq.get(`orders/find/${user._id}`);
+    setOrder(orders.data);
+    setIsLoading(false);
+  }, []);
 
   return (
     <Styled.OrderContainer>

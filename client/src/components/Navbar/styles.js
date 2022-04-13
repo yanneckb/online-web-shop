@@ -5,6 +5,10 @@ import { Link } from 'react-router-dom';
 export const StyledLink = styled(Link)`
   text-decoration: none;
   color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   ${mobile({ padding: '0.25rem 0' })}
 `;
 

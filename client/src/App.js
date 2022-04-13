@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearErrors } from './redux/user.redux';
+import { clearCart, getCart } from './redux/cart.redux';
 import { logout } from './redux/apiCalls.redux';
 import Product from './pages/Product';
 import Home from './pages/Home';
@@ -24,20 +25,29 @@ import HomeAccount from './pages/Account/HomeAccount';
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser) || false;
+  const cart = useSelector((state) => state.cart.cartData) || false;
 
   // CLEARS LOGIN/REGISTER ERRORS AND LOGOUT IF TOKEN EXPIRED
   useEffect(() => {
-    const LogoutAndReload = async () => {
-      dispatch(clearErrors());
-      if (user) {
-        const jwtDate = jwt.decode(user.accessToken).exp * 1000;
-        const currentDate = Date.now();
-        if (currentDate > jwtDate) {
-          await logout(dispatch);
-        }
-      }
-    };
     LogoutAndReload();
+  }, []);
+
+  const LogoutAndReload = async () => {
+    dispatch(clearErrors());
+    if (user) {
+      const jwtDate = jwt.decode(user.accessToken).exp * 1000;
+      const currentDate = Date.now();
+      if (currentDate > jwtDate) {
+        await logout(dispatch);
+      }
+    }
+  };
+
+  // GET CART DATA
+  useEffect(() => {
+    if (user) {
+      dispatch(getCart(user.user._id));
+    }
   }, []);
 
   return (

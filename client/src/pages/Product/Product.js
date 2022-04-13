@@ -24,17 +24,13 @@ const Product = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
 
-  // GET PRODUCT
-  useEffect(() => {
-    const getProduct = async () => {
-      try {
-        const res = await publicReq.get(`/products/find/${id}`);
-        setProduct(res.data);
-        setIsLoading(false);
-      } catch {}
-    };
-    getProduct();
-  }, [id]);
+  const getProduct = async () => {
+    try {
+      const res = await publicReq.get(`/products/find/${id}`);
+      setProduct(res.data);
+      setIsLoading(false);
+    } catch {}
+  };
 
   // HANDLE QUANTITY FOR ADD TO CART
   const handleQty = (type) => {
@@ -49,21 +45,32 @@ const Product = () => {
   // ADD ITEM TO CART
   const handleClick = () => {
     if (user) {
-      if (color === '' && size === '') {
+      if (color === '' || size === '') {
         setValid(false);
         alert('Bitte Wähle eine Größe und eine Farbe!');
       } else {
         setIsDisabled(true);
         setValid(true);
         const index = cart.products.findIndex((item) => {
-          return item._id === product._id;
+          return item.productId === product._id;
         });
         if (
-          cart.products[index]?._id === product._id &&
-          cart.products[index]?.color === color &&
-          cart.products[index]?.size === size
+          cart.products[index]?.productId === product._id &&
+          cart.products[index]?.color[0] === color &&
+          cart.products[index]?.size[0] === size
         ) {
-          dispatch(updateCart({ index, product, type: 'acs' }));
+          const productPrice = product.price;
+          const cartProduct = { ...cart.products[index], price: productPrice };
+          console.log('CART PROD: ', cartProduct);
+          dispatch(
+            updateCart({
+              userId,
+              index,
+              product: cartProduct,
+              type: 'acs',
+            })
+          );
+          console.log('DUPLICATE', userId, index, product);
           navigate('/cart');
         } else {
           dispatch(
@@ -84,6 +91,11 @@ const Product = () => {
       navigate('/login');
     }
   };
+
+  // GET PRODUCT
+  useEffect(() => {
+    getProduct();
+  }, [id]);
 
   return (
     <Styled.Container>
@@ -120,7 +132,10 @@ const Product = () => {
                     key={color}
                     onClick={() => setColor(color)}
                     style={{
-                      border: valid === false ? ' 1px solid #953b43' : 'none',
+                      border:
+                        valid === false
+                          ? ' 1px solid #953b43'
+                          : '1px solid grey',
                     }}
                   ></Styled.FilterColor>
                 ))}

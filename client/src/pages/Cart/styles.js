@@ -1,8 +1,14 @@
 import styled from 'styled-components';
 import { mobile } from '../../responsive';
 import { darkGradientBtn, hoverShadow } from '../../styles/global.styles';
+import { Link } from 'react-router-dom';
 
 export const Container = styled.div``;
+
+export const ProductLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+`;
 
 export const Wrapper = styled.div`
   padding: 2rem 10vw;
@@ -84,7 +90,16 @@ export const ProductColor = styled.div`
   width: 20px;
   height: 20px;
   border-radius: 50%;
+  border: 1px solid grey;
+  margin-left: 0.5rem;
   background-color: ${(props) => props.color};
+`;
+
+export const ProductColorContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 export const ProductSize = styled.span``;
@@ -215,14 +230,15 @@ export const InfoContainer = styled.div`
   text-align: right;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   padding: 0.75rem 0;
 `;
 
 export const AmountButton = styled.button`
   background: none;
   border: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
   color: #667eea;
   cursor: pointer;
   transition: 0.2s ease-in;
@@ -233,4 +249,6 @@ export const AmountButton = styled.button`
 
 export const Amount = styled.div`
   padding: 0.7rem 0;
+  border-bottom: 1px solid grey;
+  margin-bottom: 0.75rem;
 `;

@@ -9,22 +9,18 @@ const Products = ({ category, filters, sort }) => {
   const [filteredProducts, setfilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // GET CATEGORY PRODUCTS OR ALL PRODUCTS
-  useEffect(() => {
-    const getProducts = async () => {
-      setIsLoading(true);
-      try {
-        const res = await axios.get(
-          category
-            ? `http://localhost:8080/api/products?category=${category}`
-            : 'http://localhost:8080/api/products'
-        );
-        setProducts(res.data);
-        setIsLoading(false);
-      } catch (err) {}
-    };
-    getProducts();
-  }, [category]);
+  const getProducts = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(
+        category
+          ? `http://localhost:8080/api/products?category=${category}`
+          : 'http://localhost:8080/api/products'
+      );
+      setProducts(res.data);
+      setIsLoading(false);
+    } catch (err) {}
+  };
 
   // FILTER PRODUCTS
   useEffect(() => {
@@ -37,6 +33,11 @@ const Products = ({ category, filters, sort }) => {
         )
       );
   }, [products, category, filters]);
+
+  // GET CATEGORY PRODUCTS OR ALL PRODUCTS
+  useEffect(() => {
+    getProducts();
+  }, [category]);
 
   // SORT PRODUCTS
   useEffect(() => {

@@ -13,9 +13,15 @@ const Account = () => {
     <Styled.Wrapper>
       <Sidebar />
       <Styled.Container>
-        <Styled.Title>Hallo, {user.firstName}!</Styled.Title>
-        <hr />
-        <Outlet />
+        {user ? (
+          <>
+            <Styled.Title>Hallo, {user.firstName}!</Styled.Title>
+            <hr />
+            <Outlet />
+          </>
+        ) : (
+          <p>Bitte melde dich an um diesen Bereich zu sehen!</p>
+        )}
       </Styled.Container>
     </Styled.Wrapper>
   );

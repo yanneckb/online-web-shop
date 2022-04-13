@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, current } from '@reduxjs/toolkit';
 import { userReq } from '../helpers/requestMethods';
 
 // GET CART FROM USER ID
@@ -13,7 +13,6 @@ export const getCart = createAsyncThunk(
 export const addToCart = createAsyncThunk(
   'carts/addToCart',
   async (dispatch, getState) => {
-    console.log(dispatch);
     const res = await userReq.post(`carts/${dispatch.userId}`, dispatch);
     return res.data;
   }
@@ -31,7 +30,14 @@ export const clearCart = createAsyncThunk(
   'carts/clearCart',
   async (dispatch, getState) => {
     const res = await userReq.put(`carts/clear/${dispatch}`);
-    return { ...res.data, type };
+    return res.data;
+  }
+);
+// CLEARS USER CART (ONLY STATE)
+export const clearCartState = createAsyncThunk(
+  'carts/clearCartState',
+  async (dispatch, getState) => {
+    return dispatch;
   }
 );
 
@@ -49,38 +55,40 @@ const cartSlice = createSlice({
   },
   extraReducers: {
     // GET CART
-    [getCart.pending]: (state, action) => {
+    [getCart.pending]: (state) => {
       state.pending = true;
       state.error = false;
     },
     [getCart.fulfilled]: (state, action) => {
-      state.cartData.products = action.payload.products;
-      state.cartData.qty = action.payload.qty;
-      state.cartData.total = action.payload.total;
+      if (action.payload) {
+        state.cartData.products = action.payload.products;
+        state.cartData.qty = action.payload.qty;
+        state.cartData.total = action.payload.total;
+      }
       state.pending = false;
     },
-    [getCart.rejected]: (state, action) => {
+    [getCart.rejected]: (state) => {
       state.pending = false;
       state.error = true;
     },
     // ADD ITEM TO CART
-    [addToCart.pending]: (state, action) => {
+    [addToCart.pending]: (state) => {
       state.pending = true;
       state.error = false;
     },
     [addToCart.fulfilled]: (state, action) => {
       state.cartData.qty += 1;
-      state.cartData.products.push(...action.payload.products);
+      state.cartData.products = action.payload.products;
       state.cartData.total += action.payload.price * action.payload.qty;
       state.pending = false;
       window.location.reload();
     },
-    [addToCart.rejected]: (state, action) => {
+    [addToCart.rejected]: (state) => {
       state.pending = false;
       state.error = true;
     },
     // UPDATE ITEMS IN CART
-    [updateCart.pending]: (state, action) => {
+    [updateCart.pending]: (state) => {
       state.pending = true;
       state.error = false;
     },
@@ -107,23 +115,39 @@ const cartSlice = createSlice({
         window.location.reload();
       }
     },
-    [updateCart.rejected]: (state, action) => {
+    [updateCart.rejected]: (state) => {
       state.pending = false;
       state.error = true;
     },
     // CLEAR CART
-    [clearCart.pending]: (state, action) => {
+    [clearCart.pending]: (state) => {
       state.pending = true;
       state.error = false;
     },
-    [clearCart.fulfilled]: (state, action) => {
+    [clearCart.fulfilled]: (state) => {
       state.cartData.total = 0;
       state.cartData.qty = 0;
       state.cartData.products = [];
       state.pending = false;
       window.location.reload();
     },
-    [clearCart.rejected]: (state, action) => {
+    [clearCart.rejected]: (state) => {
+      state.pending = false;
+      state.error = true;
+    },
+    // CLEAR CART (ONLY STATE)
+    [clearCartState.pending]: (state) => {
+      state.pending = true;
+      state.error = false;
+    },
+    [clearCartState.fulfilled]: (state) => {
+      state.cartData.total = 0;
+      state.cartData.qty = 0;
+      state.cartData.products = [];
+      state.pending = false;
+      window.location.reload();
+    },
+    [clearCartState.rejected]: (state) => {
       state.pending = false;
       state.error = true;
     },

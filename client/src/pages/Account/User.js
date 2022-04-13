@@ -16,11 +16,8 @@ const User = () => {
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.username,
+    address: user.address || '',
   });
-
-  useEffect(async () => {
-    setIsLoading(false);
-  }, [updateUser]);
 
   // UPDATE USER DATA
   const handleClick = async () => {
@@ -32,6 +29,10 @@ const User = () => {
     await deleteUser(dispatch, { _id: user._id });
     await logout(dispatch);
   };
+
+  useEffect(async () => {
+    setIsLoading(false);
+  }, [updateUser]);
 
   return (
     <Styled.UserContainer>
@@ -103,10 +104,10 @@ const User = () => {
               <Styled.UserInput
                 type='text'
                 name='adress'
-                // onChange={(e) =>
-                //   setUpdateUser({ ...updateUser, address: e.target.value })
-                // }
-                placeholder='not supported'
+                onChange={(e) =>
+                  setUpdateUser({ ...updateUser, address: e.target.value })
+                }
+                placeholder={user.address}
               />
             </Styled.UserText>
             <Styled.UserText></Styled.UserText>

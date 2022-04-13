@@ -63,7 +63,6 @@ router.post('/:id', verifyTokenAndAuth, async (req, res) => {
             { new: true }
           );
           await updatedCart.save();
-          console.log(updatedCart);
           res.status(200).send(updatedCart);
         } else {
           // ADD NEW PRODUCT TO CART
@@ -113,7 +112,6 @@ router.post('/:id', verifyTokenAndAuth, async (req, res) => {
           { new: true }
         );
         await updatedCart.save();
-        console.log('UPDATED CART: ', updatedCart);
         res.status(200).send(updatedCart);
       }
     } else {
@@ -139,6 +137,7 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
     const { id } = req.params;
     const cart = await Cart.findOne({ userId: id });
     const cartId = await cart._id.toString();
+    console.log('PRODUCT', product);
     if (type === 'acs' && cart.products[index].qty < 99) {
       cart.products[index].qty = product.qty + 1;
       const updatedQty = cart.products.length;
@@ -155,7 +154,6 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
         { new: true }
       );
       await updatedCart.save();
-      console.log(updatedCart);
       res.status(200).send({ updatedCart, index });
     }
     if (type === 'decs' && cart.products[index].qty > 1) {
@@ -174,7 +172,6 @@ router.put('/:id', verifyTokenAndAuth, async (req, res) => {
         { new: true }
       );
       await updatedCart.save();
-      console.log(updatedCart);
       res.status(200).send({ updatedCart, index });
     }
     if (type === 'remove') {
@@ -226,9 +223,9 @@ router.put('/clear/:id', verifyTokenAndAuth, async (req, res) => {
 });
 
 // GET USER CART
-router.get('/find/:userId', verifyTokenAndAuth, async (req, res) => {
+router.get('/find/:id', verifyTokenAndAuth, async (req, res) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId });
+    const cart = await Cart.findOne({ userId: req.params.id });
     res.status(200).json(cart);
   } catch (err) {
     console.log('GET CART ERROR: ', err);

@@ -5,7 +5,6 @@ module.exports.verifyToken = (req, res, next) => {
   const authToken = req.query.token || req.body.token || req.headers.token;
   if (authToken) {
     const token = authToken.split(' ')[1];
-    console.log(token);
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         console.log(err);
@@ -22,8 +21,6 @@ module.exports.verifyToken = (req, res, next) => {
 // VERIFY USER TOKEN AND AUTHENTICATE
 module.exports.verifyTokenAndAuth = (req, res, next) => {
   this.verifyToken(req, res, () => {
-    console.log(req.user);
-    console.log(req.params);
     if (
       req.user.id === req.params.userId ||
       req.user.id === req.params.id ||

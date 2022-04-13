@@ -3,7 +3,7 @@ import { Add, Delete, Remove } from '@material-ui/icons';
 import * as Styled from './styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearCart, updateCart, getCart } from '../../redux/cart.redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { userReq } from '../../helpers/requestMethods';
 import Loader from '../../components/Loader';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
@@ -11,6 +11,7 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 const Cart = () => {
   const cart = useSelector((state) => state.cart.cartData);
   const userId = useSelector((state) => state.user.currentUser.user._id);
+  const user = useSelector((state) => state.user.currentUser.user);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -18,32 +19,22 @@ const Cart = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // ON PAGE LOAD GET CART FROM DB AND PUSH INTO PRODUCTS ARRAY
-  useEffect(() => {
-    if (cart.products.length > 0) {
-      dispatch(getCart(userId));
-      const pushProducts = async () => {
-        setProducts([]);
-        const productArray = [];
-        for (let i = 0; i < cart.products.length; i++) {
-          const res = await userReq.get(
-            `/products/find/${cart.products[i].productId}`
-          );
-          productArray.push({
-            ...cart.products[i],
-            img: res.data.img,
-            price: res.data.price,
-            title: res.data.title,
-          });
-        }
-        setProducts([...productArray]);
-        setIsLoading(false);
-      };
-      pushProducts();
-    } else {
-      setIsLoading(false);
+  const pushProducts = async () => {
+    const productArray = [];
+    for (let i = 0; i < cart.products.length; i++) {
+      const res = await userReq.get(
+        `/products/find/${cart.products[i].productId}`
+      );
+      productArray.push({
+        ...cart.products[i],
+        img: res.data.img,
+        price: res.data.price,
+        title: res.data.title,
+      });
     }
-  }, []);
+    setProducts([...productArray]);
+    setIsLoading(false);
+  };
 
   // HANDLES QTY CHANGE OR PRODUCT REMOVE
   const handleChange = (target, type) => {
@@ -54,6 +45,16 @@ const Cart = () => {
     dispatch(updateCart({ userId, index, product: target, type }));
   };
 
+  // ON PAGE LOAD GET CART FROM DB AND PUSH INTO PRODUCTS ARRAY
+  useEffect(() => {
+    if (cart.products.length > 0) {
+      dispatch(getCart(userId));
+      pushProducts();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+  console.log(products);
   return (
     <Styled.Container>
       {isPending ? (
@@ -93,16 +94,26 @@ const Cart = () => {
               ) : (
                 <div>
                   {products.map((product) => (
-                    <Styled.Product key={product._id}>
+                    <Styled.Product key={product.productId}>
                       <Styled.ProductDetail>
-                        <Styled.Image src={product.img} />
+                        <Styled.ProductLink
+                          to={`/product/${product.productId}`}
+                        >
+                          <Styled.Image src={product.img} />
+                        </Styled.ProductLink>
                         <Styled.Details>
-                          <Styled.ProductName>
-                            <b>{product.title}</b>
-                          </Styled.ProductName>
-                          <Styled.ProductColor color={product.color} />
+                          <Styled.ProductLink
+                            to={`/product/${product.productId}`}
+                          >
+                            <Styled.ProductName>
+                              <b>{product.title}</b>
+                            </Styled.ProductName>
+                          </Styled.ProductLink>
+                          <Styled.ProductColorContainer>
+                            Farbe: <Styled.ProductColor color={product.color} />
+                          </Styled.ProductColorContainer>
                           <Styled.ProductSize>
-                            Size: {product.size}
+                            Größe: {product.size}
                           </Styled.ProductSize>
                         </Styled.Details>
                       </Styled.ProductDetail>
@@ -133,7 +144,8 @@ const Cart = () => {
                             <Delete />
                           </Styled.AmountButton>
                         </Styled.Amount>
-                        <h3>= {product.price * product.qty}€</h3>
+
+                        <h3>{product.price * product.qty}€</h3>
                       </Styled.InfoContainer>
                     </Styled.Product>
                   ))}
@@ -160,25 +172,51 @@ const Cart = () => {
                   </Styled.Total>
                 </Styled.TopInfo>
                 <Styled.BottomInfo>
-                  <PayPalButtons
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: cart.total,
+                  {user.address ? (
+                    <PayPalButtons
+                      createOrder={(data, actions) => {
+                        return actions.order.create({
+                          purchase_units: [
+                            {
+                              amount: {
+                                value: cart.total,
+                              },
                             },
-                          },
-                        ],
-                      });
-                    }}
-                    onApprove={(data, actions) => {
-                      return actions.order.capture().then((details) => {
-                        navigate('/success');
-                        dispatch(clearCart);
-                      });
-                    }}
-                  />
+                          ],
+                        });
+                      }}
+                      onApprove={(data, actions) => {
+                        return actions.order.capture().then(async (details) => {
+                          try {
+                            const res = await userReq.post('/orders/', {
+                              userId,
+                              products: cart.products,
+                              amount: cart.total,
+                              address: user.address,
+                            });
+                            navigate('/success');
+                            dispatch(clearCart(userId));
+                          } catch {}
+                        });
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <p>Bitte füge eine Adresse in deinem Konto hinzu!</p>
+                      <Styled.TopButton
+                        style={{ margin: '0.75rem 0' }}
+                        onClick={() => navigate('/account/user')}
+                      >
+                        Adresse hinzufügen
+                      </Styled.TopButton>
+                    </div>
+                  )}
                 </Styled.BottomInfo>
               </Styled.TotalCart>
               <Styled.ShoppingInfo></Styled.ShoppingInfo>

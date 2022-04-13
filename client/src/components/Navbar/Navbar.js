@@ -4,14 +4,15 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import * as Styled from './styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/apiCalls.redux';
+import { clearCartState } from '../../redux/cart.redux';
 
 const Navbar = () => {
   const user = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
-  const handleClick = async (e) => {
-    e.preventDefault();
-    await logout(dispatch);
+  const handleClick = () => {
+    dispatch(clearCartState(user.user._id));
+    logout(dispatch);
   };
 
   return (
@@ -43,11 +44,14 @@ const Navbar = () => {
         </Styled.Center>
         <Styled.Right>
           {user && (
-            <Styled.StyledLink to='/account'>
-              <Styled.MenuItem>
-                <AccountCircleOutlinedIcon />
-              </Styled.MenuItem>
-            </Styled.StyledLink>
+            <span>
+              <Styled.StyledLink to='/account'>
+                <p>{user.user.firstName}</p>
+                <Styled.MenuItem style={{ marginLeft: '0.5rem' }}>
+                  <AccountCircleOutlinedIcon />
+                </Styled.MenuItem>
+              </Styled.StyledLink>
+            </span>
           )}
           <Styled.StyledLink to='/cart'>
             <Styled.MenuItem>
