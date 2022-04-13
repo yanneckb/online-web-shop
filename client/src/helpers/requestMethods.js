@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // BASE URL TO CONNECT CLIENT TO SERVER
-const BASE_URL = 'http://localhost:8080/api/';
+const BASE_URL = 'https://shoop-dev-oop.herokuapp.com/';
 
 // USER ACCESS TOKEN
 const user = JSON.parse(localStorage.getItem('persist:root'))?.user;
