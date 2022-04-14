@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import * as Styled from './styles';
 import Product from '../Product';
 import Loader from '../Loader';
+import { publicReq } from '../../helpers/requestMethods';
 
 const Products = ({ category, filters, sort }) => {
   const [products, setProducts] = useState([]);
@@ -12,10 +12,8 @@ const Products = ({ category, filters, sort }) => {
   const getProducts = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get(
-        category
-          ? `http://localhost:8080/api/products?category=${category}`
-          : 'http://localhost:8080/api/products'
+      const res = await publicReq.get(
+        category ? `/products?category=${category}` : '/products'
       );
       setProducts(res.data);
       setIsLoading(false);
