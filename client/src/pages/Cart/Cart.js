@@ -54,7 +54,7 @@ const Cart = () => {
       setIsLoading(false);
     }
   }, []);
-  console.log(products);
+
   return (
     <Styled.Container>
       {isPending ? (
